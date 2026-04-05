@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/sections/Hero';
 import { About } from '@/components/sections/About';
+import { Leadership } from '@/components/sections/Leadership';
 import { Services } from '@/components/sections/Services';
 import { USP } from '@/components/sections/USP';
 import { Matchmaker } from '@/components/sections/Matchmaker';
@@ -14,6 +14,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <About />
+      <Leadership />
       <Services />
       <USP />
       <Matchmaker />
