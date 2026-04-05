@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 const products = [
   {
-    title: "AIRDIT Supplier Portal",
+    title: "XgenIq Supplier Portal",
     tag: "Supply Chain",
     features: ["Vendor Onboarding", "Real-time Communication", "PO Tracking"],
     description: "A centralized hub for managing supplier relationships and compliance."
@@ -41,7 +41,7 @@ export function Products() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
-              <Badge variant="outline" className="border-primary/30 text-primary">AIRDIT Products</Badge>
+              <Badge variant="outline" className="border-primary/30 text-primary">XgenIq Products</Badge>
               <h2 className="text-4xl md:text-5xl font-headline font-bold">Ready-Made <span className="text-primary">Enterprise Solutions</span></h2>
               <p className="text-lg text-muted-foreground">
                 Accelerate your ROI with our pre-built, SAP-integrated add-ons designed for critical business functions.
