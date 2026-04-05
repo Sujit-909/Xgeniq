@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/sections/Hero';
@@ -5,6 +6,7 @@ import { About } from '@/components/sections/About';
 import { Leadership } from '@/components/sections/Leadership';
 import { Services } from '@/components/sections/Services';
 import { USP } from '@/components/sections/USP';
+import { Testimonials } from '@/components/sections/Testimonials';
 import { Matchmaker } from '@/components/sections/Matchmaker';
 import { Footer } from '@/components/layout/Footer';
 
@@ -17,6 +19,7 @@ export default function Home() {
       <Leadership />
       <Services />
       <USP />
+      <Testimonials />
       <Matchmaker />
       <Footer />
     </main>
