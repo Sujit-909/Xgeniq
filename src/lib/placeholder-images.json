@@ -1,3 +1,22 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-tech",
+      "description": "Abstract futuristic digital architecture representing AI and software",
+      "imageUrl": "https://picsum.photos/seed/tech-77/1200/800",
+      "imageHint": "abstract technology"
+    },
+    {
+      "id": "ai-visual",
+      "description": "Conceptual visualization of artificial intelligence and machine learning",
+      "imageUrl": "https://picsum.photos/seed/ai-99/800/600",
+      "imageHint": "artificial intelligence"
+    },
+    {
+      "id": "office-modern",
+      "description": "Clean modern technology office space",
+      "imageUrl": "https://picsum.photos/seed/office-22/800/600",
+      "imageHint": "modern office"
+    }
+  ]
 }
