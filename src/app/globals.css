@@ -5,38 +5,38 @@
 
 @layer base {
   :root {
-    /* Background: #1C1A1F (Dark Slate) */
-    --background: 260 8% 11%;
+    /* Updated Background: Deep Black/Grey */
+    --background: 0 0% 7%;
     --foreground: 0 0% 98%;
     
-    --card: 260 8% 13%;
+    --card: 0 0% 12%;
     --card-foreground: 0 0% 98%;
     
-    --popover: 260 8% 11%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 98%;
     
-    /* Primary: #682BF8 (Deep Purple-Blue) */
-    --primary: 258 94% 57%;
-    --primary-foreground: 0 0% 100%;
+    /* Updated Primary: Vibrant Gold/Yellow #EAB308 */
+    --primary: 45 93% 47%;
+    --primary-foreground: 0 0% 7%;
     
-    --secondary: 260 8% 20%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 98%;
     
-    --muted: 260 8% 20%;
-    --muted-foreground: 260 5% 70%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
     
-    /* Accent: #93A5FF (Luminous Accent Blue) */
-    --accent: 230 100% 79%;
-    --accent-foreground: 260 8% 11%;
+    /* Accent: Lighter Gold */
+    --accent: 45 93% 60%;
+    --accent-foreground: 0 0% 7%;
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 260 8% 20%;
-    --input: 260 8% 20%;
-    --ring: 258 94% 57%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 45 93% 47%;
     
-    --radius: 0.75rem;
+    --radius: 0.5rem;
   }
 }
 
@@ -53,7 +53,7 @@
 }
 
 .glass-card {
-  @apply bg-card/40 backdrop-blur-md border border-white/10;
+  @apply bg-card/40 backdrop-blur-md border border-white/5;
 }
 
 .gradient-text {
