@@ -32,7 +32,7 @@ export function About() {
 
           <div className="space-y-8">
             <div className="space-y-4">
-              <Badge variant="outline" className="border-primary/30 text-primary">About XgenIq</雀>
+              <Badge variant="outline" className="border-primary/30 text-primary">About XgenIq</Badge>
               <h2 className="text-4xl md:text-5xl font-headline font-bold">Forward-Thinking <span className="text-primary">Digital Transformation</span></h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 XgenIq Technologies is a premier software development house based in Cuttack, Odisha. We are focused on delivering innovative and scalable technology solutions that empower modern enterprises.
