@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Cpu } from 'lucide-react';
+import { Menu, X, Cpu, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -50,18 +50,32 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Button variant="default" size="sm" asChild className="rounded-full shadow-lg shadow-primary/20">
-            <Link href="#inquiry">Get a Quote</Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" asChild className="rounded-full hover:bg-primary/10 group/contact">
+              <Link href="#inquiry" title="Contact Us">
+                <Mail className="w-5 h-5 text-muted-foreground group-hover/contact:text-primary transition-colors" />
+              </Link>
+            </Button>
+            <Button variant="default" size="sm" asChild className="rounded-full shadow-lg shadow-primary/20">
+              <Link href="#inquiry">Get a Quote</Link>
+            </Button>
+          </div>
         </div>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="md:hidden p-2 text-foreground"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X /> : <Menu />}
-        </button>
+        {/* Mobile Section */}
+        <div className="flex items-center gap-2 md:hidden">
+          <Button variant="ghost" size="icon" asChild className="rounded-full">
+            <Link href="#inquiry" title="Contact Us">
+              <Mail className="w-5 h-5 text-primary" />
+            </Link>
+          </Button>
+          <button 
+            className="p-2 text-foreground"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
