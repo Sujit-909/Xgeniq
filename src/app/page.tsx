@@ -5,6 +5,9 @@ import { Hero } from '@/components/sections/Hero';
 import { About } from '@/components/sections/About';
 import { Leadership } from '@/components/sections/Leadership';
 import { Services } from '@/components/sections/Services';
+import { TechStack } from '@/components/sections/TechStack';
+import { Products } from '@/components/sections/Products';
+import { CaseStudies } from '@/components/sections/CaseStudies';
 import { USP } from '@/components/sections/USP';
 import { Testimonials } from '@/components/sections/Testimonials';
 import { Matchmaker } from '@/components/sections/Matchmaker';
@@ -15,9 +18,12 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
+      <TechStack />
+      <Services />
+      <Products />
+      <CaseStudies />
       <About />
       <Leadership />
-      <Services />
       <USP />
       <Testimonials />
       <Matchmaker />

@@ -4,79 +4,114 @@
 import React from 'react';
 import { 
   Code2, 
-  Smartphone, 
   BrainCircuit, 
-  Building2, 
-  Boxes, 
-  Gavel, 
-  Users 
+  Cloud, 
+  Database, 
+  LineChart, 
+  Workflow, 
+  Smartphone,
+  ShieldCheck
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
-const services = [
+const serviceCategories = [
   {
-    title: "Custom Software Development",
-    description: "Tailored software solutions designed to solve your unique business challenges with precision.",
-    icon: Code2,
+    category: "SAP & Enterprise Solutions",
+    items: [
+      {
+        title: "SAP BTP Consulting",
+        description: "Full-cycle BTP implementation, Fiori, CAPM, and RAP development.",
+        icon: Database,
+      },
+      {
+        title: "SAP Integration (CPI)",
+        description: "Seamless connectivity between SAP and non-SAP enterprise systems.",
+        icon: Workflow,
+      },
+      {
+        title: "SAP Analytics Cloud",
+        description: "Advanced visualization and predictive forecasting with SAC.",
+        icon: LineChart,
+      }
+    ]
   },
   {
-    title: "Web & Mobile App Development",
-    description: "Modern, high-performance web and mobile applications with exceptional user experiences.",
-    icon: Smartphone,
+    category: "AI & Machine Learning",
+    items: [
+      {
+        title: "LLM & RAG Solutions",
+        description: "Custom generative AI apps and intelligent document extraction.",
+        icon: BrainCircuit,
+      },
+      {
+        title: "Conversational AI",
+        description: "Enterprise-grade chatbots and automated SQL data agents.",
+        icon: Code2,
+      },
+      {
+        title: "Predictive Analytics",
+        description: "ML models for maintenance, churn, and business forecasting.",
+        icon: LineChart,
+      }
+    ]
   },
   {
-    title: "AI & Machine Learning Solutions",
-    description: "Integrating intelligent algorithms and data models to automate and optimize your workflows.",
-    icon: BrainCircuit,
-  },
-  {
-    title: "Enterprise Application Development",
-    description: "Robust, scalable software ecosystems for complex corporate environments and large-scale operations.",
-    icon: Building2,
-  },
-  {
-    title: "SAP Consulting & Integration",
-    description: "Expert guidance on SAP ecosystems to maximize your business efficiency and data insights.",
-    icon: Boxes,
-  },
-  {
-    title: "Bid & Reverse Auction Systems",
-    description: "Our strong USP: Advanced digital platforms for transparent and efficient procurement processes.",
-    icon: Gavel,
-  },
-  {
-    title: "Vendor Management Portals",
-    description: "Centralized hubs for managing supplier relationships, compliance, and performance tracking.",
-    icon: Users,
+    category: "Digital & Cloud",
+    items: [
+      {
+        title: "Custom App Dev",
+        description: "Modern web and mobile apps (Flutter, .NET MAUI) with offline support.",
+        icon: Smartphone,
+      },
+      {
+        title: "Multi-Cloud Strategy",
+        description: "Scalable architecture across AWS, Azure, and Google Cloud.",
+        icon: Cloud,
+      },
+      {
+        title: "Cybersecurity & DevOps",
+        description: "High availability, disaster recovery, and automated pipelines.",
+        icon: ShieldCheck,
+      }
+    ]
   }
 ];
 
 export function Services() {
   return (
-    <section id="services" className="py-24">
+    <section id="services" className="py-24 bg-background">
       <div className="container px-6 mx-auto">
-        <div className="max-w-3xl mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-headline font-bold">Our <span className="text-primary">Comprehensive</span> Services</h2>
-          <p className="text-lg text-muted-foreground">
-            We provide a wide range of cutting-edge technology services designed to propel your business into the digital future.
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <Badge variant="outline" className="border-primary/30 text-primary">Core Expertise</Badge>
+          <h2 className="text-4xl md:text-5xl font-headline font-bold text-foreground">Next-Gen <span className="text-primary">IT Services</span></h2>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            From SAP BTP modernization to advanced Generative AI agents, we provide end-to-end digital transformation.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <Card key={index} className="glass-card hover:bg-card/60 transition-all duration-300 group hover:-translate-y-2 border-primary/5">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle className="text-xl font-headline font-bold">{service.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  {service.description}
-                </p>
-              </CardContent>
-            </Card>
+        <div className="space-y-16">
+          {serviceCategories.map((cat, idx) => (
+            <div key={idx} className="space-y-8">
+              <h3 className="text-2xl font-headline font-bold border-l-4 border-primary pl-4">{cat.category}</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {cat.items.map((service, sIdx) => (
+                  <Card key={sIdx} className="glass-card hover:bg-card/60 transition-all duration-300 group hover:-translate-y-1 border-primary/5">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                        <service.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <CardTitle className="text-xl font-headline font-bold">{service.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {service.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>

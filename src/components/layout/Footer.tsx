@@ -21,7 +21,7 @@ export function Footer() {
               <span className="text-xl font-headline font-bold tracking-tighter">XgenIq<span className="text-primary">.</span></span>
             </Link>
             <p className="text-muted-foreground leading-relaxed">
-              Transforming businesses with smart AI and scalable software solutions. Leading the future of digital innovation from Cuttack, Odisha.
+              Global IT solutions provider specializing in SAP BTP, Enterprise AI, and Cloud Infrastructure. Delivering excellence from Cuttack, Odisha.
             </p>
             <div className="flex gap-4">
               <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all">
@@ -37,11 +37,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-headline font-bold text-lg mb-6">Explore</h4>
+            <h4 className="font-headline font-bold text-lg mb-6">Expertise</h4>
             <ul className="space-y-4">
-              {['Home', 'About Us', 'Services', 'Why Choose Us', 'Inquiry'].map((item) => (
+              {['SAP BTP Consulting', 'AI & ML Solutions', 'Cloud Infrastructure', 'Digital Products', 'Staffing Services'].map((item) => (
                 <li key={item}>
-                  <Link href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#services" className="text-muted-foreground hover:text-primary transition-colors">
                     {item}
                   </Link>
                 </li>
@@ -62,18 +62,18 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                <a href="tel:+91XXXXXXXXXX" className="hover:text-primary transition-colors">+91-XXXXXXXXXX</a>
+                <a href="tel:+91-XXXXXXXXXX" className="hover:text-primary transition-colors">+91-XXXXXXXXXX</a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-headline font-bold text-lg mb-6">Newsletter</h4>
-            <p className="text-muted-foreground mb-4">Subscribe to get the latest tech insights and company updates.</p>
+            <h4 className="font-headline font-bold text-lg mb-6">Stay Informed</h4>
+            <p className="text-muted-foreground mb-4">Get the latest insights on SAP BTP and Enterprise AI.</p>
             <div className="flex flex-col gap-2">
               <input 
                 type="email" 
-                placeholder="Enter your email" 
+                placeholder="Business Email" 
                 className="bg-secondary/50 border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none transition-all"
               />
               <button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 rounded-lg transition-all">
@@ -92,6 +92,7 @@ export function Footer() {
           <div className="flex gap-8 text-sm text-muted-foreground">
             <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
             <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Careers</Link>
           </div>
         </div>
       </div>

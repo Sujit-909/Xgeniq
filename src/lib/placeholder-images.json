@@ -29,6 +29,18 @@
       "description": "Professional portrait of a male executive",
       "imageUrl": "https://picsum.photos/seed/md/600/800",
       "imageHint": "professional man"
+    },
+    {
+      "id": "product-dashboard",
+      "description": "Enterprise dashboard visualization",
+      "imageUrl": "https://picsum.photos/seed/dashboard/800/600",
+      "imageHint": "enterprise software"
+    },
+    {
+      "id": "case-study-retail",
+      "description": "Modern retail tech implementation",
+      "imageUrl": "https://picsum.photos/seed/retail/800/600",
+      "imageHint": "retail technology"
     }
   ]
 }
