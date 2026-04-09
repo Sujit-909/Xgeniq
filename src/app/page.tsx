@@ -8,6 +8,7 @@ import { Services } from '@/components/sections/Services';
 import { TechStack } from '@/components/sections/TechStack';
 import { Products } from '@/components/sections/Products';
 import { CaseStudies } from '@/components/sections/CaseStudies';
+import { Blog } from '@/components/sections/Blog';
 import { USP } from '@/components/sections/USP';
 import { Testimonials } from '@/components/sections/Testimonials';
 import { Matchmaker } from '@/components/sections/Matchmaker';
@@ -22,6 +23,7 @@ export default function Home() {
       <Services />
       <Products />
       <CaseStudies />
+      <Blog />
       <About />
       <Leadership />
       <USP />

@@ -41,6 +41,24 @@
       "description": "Modern retail tech implementation",
       "imageUrl": "https://picsum.photos/seed/retail/800/600",
       "imageHint": "retail technology"
+    },
+    {
+      "id": "blog-sap",
+      "description": "SAP BTP and Cloud integration concept",
+      "imageUrl": "https://picsum.photos/seed/sap-blog/800/600",
+      "imageHint": "cloud computing"
+    },
+    {
+      "id": "blog-react",
+      "description": "Modern web development with React and TypeScript",
+      "imageUrl": "https://picsum.photos/seed/react-blog/800/600",
+      "imageHint": "software code"
+    },
+    {
+      "id": "blog-dotnet",
+      "description": "Enterprise architecture with .NET and C#",
+      "imageUrl": "https://picsum.photos/seed/dotnet-blog/800/600",
+      "imageHint": "digital infrastructure"
     }
   ]
 }
