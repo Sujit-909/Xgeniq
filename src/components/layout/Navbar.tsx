@@ -24,6 +24,7 @@ export function Navbar() {
     { name: 'Products', href: '#products' },
     { name: 'Success Stories', href: '#case-studies' },
     { name: 'Insights', href: '#blog' },
+    { name: 'Careers', href: '#careers' },
     { name: 'About', href: '#about' },
   ];
 

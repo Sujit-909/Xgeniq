@@ -39,9 +39,9 @@ export function Footer() {
           <div>
             <h4 className="font-headline font-bold text-lg mb-6">Expertise</h4>
             <ul className="space-y-4">
-              {['SAP BTP Consulting', 'AI & ML Solutions', 'Cloud Infrastructure', 'Digital Products', 'Staffing Services'].map((item) => (
+              {['SAP BTP Consulting', 'AI & ML Solutions', 'Cloud Infrastructure', 'Digital Products', 'Staffing Services', 'Careers'].map((item) => (
                 <li key={item}>
-                  <Link href="#services" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href={item === 'Careers' ? '#careers' : '#services'} className="text-muted-foreground hover:text-primary transition-colors">
                     {item}
                   </Link>
                 </li>

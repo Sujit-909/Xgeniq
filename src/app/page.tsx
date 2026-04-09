@@ -11,6 +11,7 @@ import { CaseStudies } from '@/components/sections/CaseStudies';
 import { Blog } from '@/components/sections/Blog';
 import { USP } from '@/components/sections/USP';
 import { Testimonials } from '@/components/sections/Testimonials';
+import { Careers } from '@/components/sections/Careers';
 import { Matchmaker } from '@/components/sections/Matchmaker';
 import { Footer } from '@/components/layout/Footer';
 
@@ -26,6 +27,7 @@ export default function Home() {
       <Blog />
       <About />
       <Leadership />
+      <Careers />
       <USP />
       <Testimonials />
       <Matchmaker />

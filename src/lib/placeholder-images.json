@@ -59,6 +59,30 @@
       "description": "Enterprise architecture with .NET and C#",
       "imageUrl": "https://picsum.photos/seed/dotnet-blog/800/600",
       "imageHint": "digital infrastructure"
+    },
+    {
+      "id": "culture-1",
+      "description": "Team collaboration at XgenIq",
+      "imageUrl": "https://picsum.photos/seed/team-work/800/600",
+      "imageHint": "team collaboration"
+    },
+    {
+      "id": "culture-2",
+      "description": "XgenIq team outing and fun",
+      "imageUrl": "https://picsum.photos/seed/fun-office/800/600",
+      "imageHint": "office culture"
+    },
+    {
+      "id": "emp-1",
+      "description": "Employee portrait",
+      "imageUrl": "https://picsum.photos/seed/emp1/400/400",
+      "imageHint": "professional person"
+    },
+    {
+      "id": "emp-2",
+      "description": "Employee portrait",
+      "imageUrl": "https://picsum.photos/seed/emp2/400/400",
+      "imageHint": "professional person"
     }
   ]
 }
