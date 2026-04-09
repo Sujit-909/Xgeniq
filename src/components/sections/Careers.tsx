@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +27,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Autoplay from 'embla-carousel-autoplay';
 import { 
   Briefcase, 
@@ -47,7 +54,10 @@ import {
   Info,
   Building2,
   Globe,
-  Users
+  Users,
+  Search,
+  ChevronLeft,
+  CalendarDays
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
@@ -60,6 +70,8 @@ const openRoles = [
     workMode: "Hybrid",
     type: "Full-time",
     experience: "5+ Years",
+    experienceValue: 5,
+    postedDate: "2024-02-15",
     skills: ["CAPM", "ABAP RAP", "SAP Fiori", "OData"],
     summary: "Architecting scalable extensions using CAPM and RAP for global Fortune 500 clients.",
     jd: "As a Senior SAP BTP Consultant at XgenIq, you will be at the forefront of digital transformation. You will architect and implement cloud-native applications and side-by-side extensions, ensuring our clients leverage the full potential of the SAP Business Technology Platform.",
@@ -78,6 +90,8 @@ const openRoles = [
     workMode: "Office",
     type: "Full-time",
     experience: "3+ Years",
+    experienceValue: 3,
+    postedDate: "2024-02-20",
     skills: ["Python", "LangChain", "Vector DBs", "LLMs"],
     summary: "Developing RAG-based applications and autonomous agents for enterprise automation.",
     jd: "Join our AI Innovation Lab to build the next generation of enterprise intelligence. You will work on cutting-edge Generative AI projects, from RAG pipelines to autonomous agents that solve complex business challenges.",
@@ -96,6 +110,8 @@ const openRoles = [
     workMode: "Remote",
     type: "Contract",
     experience: "4+ Years",
+    experienceValue: 4,
+    postedDate: "2024-02-10",
     skills: ["Next.js", "TypeScript", "Tailwind CSS", "Redux"],
     summary: "Building complex, performant web dashboards and accessible design systems.",
     jd: "We are looking for a Senior React Developer who is passionate about performance and UX. You will lead the development of high-impact web applications, ensuring they are scalable, accessible, and fast.",
@@ -105,6 +121,21 @@ const openRoles = [
       "Implement robust state management and optimize application performance.",
       "Drive the adoption of modern frontend practices like Server Components and advanced testing."
     ]
+  },
+  {
+    jobId: "XG-SAP-2024-04",
+    title: "Fiori/UI5 Developer",
+    department: "Enterprise Solutions",
+    location: "Cuttack",
+    workMode: "Office",
+    type: "Full-time",
+    experience: "2+ Years",
+    experienceValue: 2,
+    postedDate: "2024-01-05",
+    skills: ["SAPUI5", "JavaScript", "XML", "CSS"],
+    summary: "Creating intuitive user interfaces for enterprise applications.",
+    jd: "Work on building high-quality Fiori applications.",
+    responsibilities: ["Develop UI5 apps", "Integrate with OData", "Maintain design standards"]
   }
 ];
 
@@ -112,12 +143,22 @@ const closedRoles = [
   {
     title: "Junior Web Developer",
     department: "Digital Delivery",
-    closedDate: "Oct 2023"
+    closedDate: "2023-10-15"
   },
   {
     title: "SAP ABAP Intern",
     department: "Enterprise Solutions",
-    closedDate: "Nov 2023"
+    closedDate: "2023-11-20"
+  },
+  {
+    title: "Project Manager",
+    department: "Operations",
+    closedDate: "2023-12-01"
+  },
+  {
+    title: "HR Specialist",
+    department: "Human Resources",
+    closedDate: "2024-01-10"
   }
 ];
 
@@ -154,12 +195,53 @@ const lifeAtXgenIq = [
   { id: "office-modern", title: "Modern Workspaces" }
 ];
 
+const ITEMS_PER_PAGE = 3;
+
 export function Careers() {
   const { toast } = useToast();
   const [selectedJob, setSelectedJob] = useState<typeof openRoles[0] | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [openPage, setOpenPage] = useState(1);
+  const [closedPage, setClosedPage] = useState(1);
+
   const plugin = React.useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
   );
+
+  const filteredOpenRoles = useMemo(() => {
+    let roles = [...openRoles];
+    
+    // Search filter
+    if (searchTerm) {
+      roles = roles.filter(role => 
+        role.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        role.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        role.skills.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+
+    // Sort
+    roles.sort((a, b) => {
+      if (sortBy === "newest") return new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime();
+      if (sortBy === "oldest") return new Date(a.postedDate).getTime() - new Date(b.postedDate).getTime();
+      if (sortBy === "experience-asc") return a.experienceValue - b.experienceValue;
+      if (sortBy === "experience-desc") return b.experienceValue - a.experienceValue;
+      return 0;
+    });
+
+    return roles;
+  }, [searchTerm, sortBy]);
+
+  const paginatedOpenRoles = useMemo(() => {
+    const start = (openPage - 1) * ITEMS_PER_PAGE;
+    return filteredOpenRoles.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredOpenRoles, openPage]);
+
+  const paginatedClosedRoles = useMemo(() => {
+    const start = (closedPage - 1) * ITEMS_PER_PAGE;
+    return closedRoles.slice(start, start + ITEMS_PER_PAGE);
+  }, [closedPage]);
 
   const handleApplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -194,170 +276,272 @@ export function Careers() {
 
         <div className="max-w-5xl mx-auto space-y-12 mb-24">
           <Tabs defaultValue="open" className="w-full">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-              <h3 className="text-3xl font-headline font-bold">Career <span className="text-primary">Opportunities</span></h3>
-              <TabsList className="bg-card/20 border border-white/5 p-1">
-                <TabsTrigger value="open" className="px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">Open Roles</TabsTrigger>
-                <TabsTrigger value="closed" className="px-6 py-2 data-[state=active]:bg-secondary data-[state=active]:text-foreground transition-all">Recently Closed</TabsTrigger>
-              </TabsList>
+            <div className="flex flex-col gap-8 mb-10">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <h3 className="text-3xl font-headline font-bold">Career <span className="text-primary">Opportunities</span></h3>
+                <TabsList className="bg-card/20 border border-white/5 p-1">
+                  <TabsTrigger value="open" className="px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">Open Roles</TabsTrigger>
+                  <TabsTrigger value="closed" className="px-6 py-2 data-[state=active]:bg-secondary data-[state=active]:text-foreground transition-all">Recently Closed</TabsTrigger>
+                </TabsList>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="relative group col-span-1 md:col-span-2">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input 
+                    placeholder="Search by role, department or skill..." 
+                    className="pl-10 bg-secondary/30 border-white/5 focus:ring-primary/50"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setOpenPage(1);
+                    }}
+                  />
+                </div>
+                <Select value={sortBy} onValueChange={(val) => {
+                  setSortBy(val);
+                  setOpenPage(1);
+                }}>
+                  <SelectTrigger className="bg-secondary/30 border-white/5">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-white/10">
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                    <SelectItem value="experience-asc">Experience: Low to High</SelectItem>
+                    <SelectItem value="experience-desc">Experience: High to Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <TabsContent value="open" className="space-y-6 mt-0">
-              {openRoles.map((role, idx) => (
-                <Card key={idx} className="glass-card border-white/5 bg-card/10 hover:bg-card/30 transition-all group overflow-hidden">
-                  <CardContent className="p-8">
-                    <div className="flex flex-col lg:flex-row gap-8 lg:items-center">
-                      <div className="flex-1 space-y-6">
-                        <div className="space-y-4">
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div className="space-y-1">
-                              <h4 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{role.title}</h4>
-                              <div className="flex items-center gap-3 text-xs font-mono text-muted-foreground">
-                                <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">{role.jobId}</span>
-                                <span>{role.department}</span>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              <Badge variant="outline" className="bg-white/5 border-white/10 flex items-center gap-1.5 py-1 px-3 rounded-full">
-                                {getWorkModeIcon(role.workMode)} {role.workMode}
-                              </Badge>
-                              <Badge variant="outline" className="bg-white/5 border-white/10 flex items-center gap-1.5 py-1 px-3 rounded-full">
-                                <Clock className="w-3.5 h-3.5" /> {role.type}
-                              </Badge>
-                            </div>
-                          </div>
+              {paginatedOpenRoles.length > 0 ? (
+                <>
+                  <div className="space-y-6">
+                    {paginatedOpenRoles.map((role, idx) => (
+                      <Card key={idx} className="glass-card border-white/5 bg-card/10 hover:bg-card/30 transition-all group overflow-hidden">
+                        <CardContent className="p-8">
+                          <div className="flex flex-col lg:flex-row gap-8 lg:items-center">
+                            <div className="flex-1 space-y-6">
+                              <div className="space-y-4">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                  <div className="space-y-1">
+                                    <h4 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{role.title}</h4>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-muted-foreground">
+                                      <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">{role.jobId}</span>
+                                      <span>{role.department}</span>
+                                      <span className="flex items-center gap-1 text-accent font-bold"><CalendarDays className="w-3 h-3" /> Posted {new Date(role.postedDate).toLocaleDateString()}</span>
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-wrap gap-2">
+                                    <Badge variant="outline" className="bg-white/5 border-white/10 flex items-center gap-1.5 py-1 px-3 rounded-full">
+                                      {getWorkModeIcon(role.workMode)} {role.workMode}
+                                    </Badge>
+                                    <Badge variant="outline" className="bg-primary/10 border-primary/20 text-primary flex items-center gap-1.5 py-1 px-3 rounded-full">
+                                      <Users className="w-3.5 h-3.5" /> {role.experience}
+                                    </Badge>
+                                    <Badge variant="outline" className="bg-white/5 border-white/10 flex items-center gap-1.5 py-1 px-3 rounded-full">
+                                      <Clock className="w-3.5 h-3.5" /> {role.type}
+                                    </Badge>
+                                  </div>
+                                </div>
 
-                          <p className="text-muted-foreground leading-relaxed max-w-2xl">
-                            {role.summary}
-                          </p>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                          {role.skills.map((skill) => (
-                            <Badge key={skill} variant="secondary" className="bg-white/5 text-foreground/70 text-[10px] uppercase tracking-wider">
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-row sm:flex-col lg:flex-row gap-3 min-w-fit">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="rounded-full border-primary/20 hover:bg-primary/10 flex-1 sm:flex-none">
-                              <Info className="w-4 h-4 mr-2" /> View Details
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[700px] bg-background border-white/10 text-foreground overflow-y-auto max-h-[90vh]">
-                            <DialogHeader>
-                              <div className="flex items-center gap-2 mb-2">
-                                <Badge className="bg-primary text-primary-foreground">{role.jobId}</Badge>
-                                <Badge variant="outline" className="border-white/20">{role.department}</Badge>
-                              </div>
-                              <DialogTitle className="text-3xl font-headline font-bold">
-                                {role.title}
-                              </DialogTitle>
-                              <div className="flex flex-wrap items-center gap-4 mt-3">
-                                <span className="flex items-center gap-1.5 text-sm text-primary font-medium">
-                                  {getWorkModeIcon(role.workMode)} {role.location} ({role.workMode})
-                                </span>
-                                <span className="text-muted-foreground">•</span>
-                                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                                  <Briefcase className="w-4 h-4" /> {role.type}
-                                </span>
-                                <span className="text-muted-foreground">•</span>
-                                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                                  <ChevronRight className="w-4 h-4" /> {role.experience}
-                                </span>
-                              </div>
-                            </DialogHeader>
-                            
-                            <div className="space-y-8 py-8 border-t border-white/5 mt-6">
-                              <div className="space-y-3">
-                                <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
-                                  <FileText className="w-5 h-5" /> Detailed Description
-                                </h5>
-                                <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                                  {role.jd}
+                                <p className="text-muted-foreground leading-relaxed max-w-2xl">
+                                  {role.summary}
                                 </p>
                               </div>
 
-                              <div className="space-y-4">
-                                <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
-                                  <Zap className="w-5 h-5" /> Core Responsibilities
-                                </h5>
-                                <ul className="grid gap-3">
-                                  {role.responsibilities.map((item, i) => (
-                                    <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm leading-relaxed">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                                      {item}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-
-                              <div className="space-y-4">
-                                <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
-                                  <Briefcase className="w-5 h-5" /> Preferred Tech Stack
-                                </h5>
-                                <div className="flex flex-wrap gap-2">
-                                  {role.skills.map((skill) => (
-                                    <Badge key={skill} className="bg-secondary/50 text-foreground border border-white/5 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default">
-                                      {skill}
-                                    </Badge>
-                                  ))}
-                                </div>
+                              <div className="flex flex-wrap gap-2">
+                                {role.skills.map((skill) => (
+                                  <Badge key={skill} variant="secondary" className="bg-white/5 text-foreground/70 text-[10px] uppercase tracking-wider">
+                                    {skill}
+                                  </Badge>
+                                ))}
                               </div>
                             </div>
 
-                            <DialogFooter className="border-t border-white/5 pt-6 flex-col sm:flex-row gap-4">
+                            <div className="flex flex-row sm:flex-col lg:flex-row gap-3 min-w-fit">
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
+                                  <Button variant="outline" size="sm" className="rounded-full border-primary/20 hover:bg-primary/10 flex-1 sm:flex-none">
+                                    <Info className="w-4 h-4 mr-2" /> View Details
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[700px] bg-background border-white/10 text-foreground overflow-y-auto max-h-[90vh]">
+                                  <DialogHeader>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Badge className="bg-primary text-primary-foreground">{role.jobId}</Badge>
+                                      <Badge variant="outline" className="border-white/20">{role.department}</Badge>
+                                    </div>
+                                    <DialogTitle className="text-3xl font-headline font-bold">
+                                      {role.title}
+                                    </DialogTitle>
+                                    <div className="flex flex-wrap items-center gap-4 mt-3">
+                                      <span className="flex items-center gap-1.5 text-sm text-primary font-medium">
+                                        {getWorkModeIcon(role.workMode)} {role.location} ({role.workMode})
+                                      </span>
+                                      <span className="text-muted-foreground">•</span>
+                                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                        <Briefcase className="w-4 h-4" /> {role.type}
+                                      </span>
+                                      <span className="text-muted-foreground">•</span>
+                                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                        <ChevronRight className="w-4 h-4" /> {role.experience}
+                                      </span>
+                                    </div>
+                                  </DialogHeader>
+                                  
+                                  <div className="space-y-8 py-8 border-t border-white/5 mt-6">
+                                    <div className="space-y-3">
+                                      <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
+                                        <FileText className="w-5 h-5" /> Detailed Description
+                                      </h5>
+                                      <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
+                                        {role.jd}
+                                      </p>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                      <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
+                                        <Zap className="w-5 h-5" /> Core Responsibilities
+                                      </h5>
+                                      <ul className="grid gap-3">
+                                        {role.responsibilities.map((item, i) => (
+                                          <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm leading-relaxed">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                                            {item}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                      <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
+                                        <Briefcase className="w-5 h-5" /> Preferred Tech Stack
+                                      </h5>
+                                      <div className="flex flex-wrap gap-2">
+                                        {role.skills.map((skill) => (
+                                          <Badge key={skill} className="bg-secondary/50 text-foreground border border-white/5 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default">
+                                            {skill}
+                                          </Badge>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <DialogFooter className="border-t border-white/5 pt-6 flex-col sm:flex-row gap-4">
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
+                                          Apply Now
+                                        </Button>
+                                      </DialogTrigger>
+                                      <DialogContent className="sm:max-w-[600px] bg-background border-white/10 text-foreground overflow-y-auto max-h-[90vh]">
+                                        <DialogHeader>
+                                          <DialogTitle className="text-2xl font-headline font-bold">
+                                            Application: <span className="text-primary">{role.title}</span>
+                                          </DialogTitle>
+                                          <DialogDescription className="text-muted-foreground">
+                                            Join the XgenIq innovation hub. Complete the form below.
+                                          </DialogDescription>
+                                        </DialogHeader>
+                                        <form onSubmit={handleApplySubmit} className="space-y-6 py-4">
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                              <Label htmlFor="name" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
+                                              <Input id="name" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
+                                            </div>
+                                            <div className="space-y-2">
+                                              <Label htmlFor="email" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
+                                              <Input id="email" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
+                                            </div>
+                                          </div>
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                              <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
+                                              <Input id="phone" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
+                                            </div>
+                                            <div className="space-y-2">
+                                              <Label htmlFor="linkedin" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
+                                              <Input id="linkedin" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
+                                            </div>
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label htmlFor="cover" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
+                                            <Textarea id="cover" placeholder="What makes you a great fit?" className="min-h-[100px] bg-secondary/50 border-white/10" />
+                                          </div>
+                                          <div className="space-y-2">
+                                            <Label htmlFor="cv" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
+                                            <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
+                                              <Input id="cv" type="file" accept=".pdf" className="hidden" />
+                                              <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
+                                              <p className="text-sm font-medium">Click to upload CV</p>
+                                              <p className="text-xs text-muted-foreground mt-1">PDF format preferred</p>
+                                            </div>
+                                          </div>
+                                          <DialogFooter>
+                                            <Button type="submit" className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
+                                              Submit Application
+                                            </Button>
+                                          </DialogFooter>
+                                        </form>
+                                      </DialogContent>
+                                    </Dialog>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    size="sm"
+                                    className="rounded-full px-6 flex-1 sm:flex-none shadow-lg shadow-primary/20"
+                                    onClick={() => setSelectedJob(role)}
+                                  >
                                     Apply Now
                                   </Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-[600px] bg-background border-white/10 text-foreground overflow-y-auto max-h-[90vh]">
                                   <DialogHeader>
                                     <DialogTitle className="text-2xl font-headline font-bold">
-                                      Application: <span className="text-primary">{role.title}</span>
+                                      Application: <span className="text-primary">{selectedJob?.title}</span>
                                     </DialogTitle>
                                     <DialogDescription className="text-muted-foreground">
-                                      Join the XgenIq innovation hub. Complete the form below.
+                                      Ready to join XgenIq? Tell us more about yourself.
                                     </DialogDescription>
                                   </DialogHeader>
                                   <form onSubmit={handleApplySubmit} className="space-y-6 py-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                       <div className="space-y-2">
-                                        <Label htmlFor="name" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
-                                        <Input id="name" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
+                                        <Label htmlFor="name-quick" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
+                                        <Input id="name-quick" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
                                       </div>
                                       <div className="space-y-2">
-                                        <Label htmlFor="email" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
-                                        <Input id="email" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
+                                        <Label htmlFor="email-quick" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
+                                        <Input id="email-quick" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
                                       </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                       <div className="space-y-2">
-                                        <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
-                                        <Input id="phone" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
+                                        <Label htmlFor="phone-quick" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
+                                        <Input id="phone-quick" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
                                       </div>
                                       <div className="space-y-2">
-                                        <Label htmlFor="linkedin" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
-                                        <Input id="linkedin" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
+                                        <Label htmlFor="linkedin-quick" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
+                                        <Input id="linkedin-quick" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
                                       </div>
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="cover" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
-                                      <Textarea id="cover" placeholder="What makes you a great fit?" className="min-h-[100px] bg-secondary/50 border-white/10" />
+                                      <Label htmlFor="cover-quick" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
+                                      <Textarea id="cover-quick" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" />
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="cv" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
+                                      <Label htmlFor="cv-quick" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
                                       <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
-                                        <Input id="cv" type="file" accept=".pdf" className="hidden" />
+                                        <Input id="cv-quick" type="file" accept=".pdf" className="hidden" />
                                         <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
                                         <p className="text-sm font-medium">Click to upload CV</p>
-                                        <p className="text-xs text-muted-foreground mt-1">PDF format preferred</p>
                                       </div>
                                     </div>
                                     <DialogFooter>
@@ -368,89 +552,108 @@ export function Careers() {
                                   </form>
                                 </DialogContent>
                               </Dialog>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
 
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button 
-                              size="sm"
-                              className="rounded-full px-6 flex-1 sm:flex-none shadow-lg shadow-primary/20"
-                              onClick={() => setSelectedJob(role)}
-                            >
-                              Apply Now
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[600px] bg-background border-white/10 text-foreground overflow-y-auto max-h-[90vh]">
-                            <DialogHeader>
-                              <DialogTitle className="text-2xl font-headline font-bold">
-                                Application: <span className="text-primary">{selectedJob?.title}</span>
-                              </DialogTitle>
-                              <DialogDescription className="text-muted-foreground">
-                                Ready to join XgenIq? Tell us more about yourself.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <form onSubmit={handleApplySubmit} className="space-y-6 py-4">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                  <Label htmlFor="name-quick" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
-                                  <Input id="name-quick" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="email-quick" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
-                                  <Input id="email-quick" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                  <Label htmlFor="phone-quick" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
-                                  <Input id="phone-quick" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="linkedin-quick" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
-                                  <Input id="linkedin-quick" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="cover-quick" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
-                                <Textarea id="cover-quick" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="cv-quick" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
-                                <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
-                                  <Input id="cv-quick" type="file" accept=".pdf" className="hidden" />
-                                  <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
-                                  <p className="text-sm font-medium">Click to upload CV</p>
-                                </div>
-                              </div>
-                              <DialogFooter>
-                                <Button type="submit" className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
-                                  Submit Application
-                                </Button>
-                              </DialogFooter>
-                            </form>
-                          </DialogContent>
-                        </Dialog>
+                  {/* Pagination Open Roles */}
+                  {filteredOpenRoles.length > ITEMS_PER_PAGE && (
+                    <div className="flex justify-center items-center gap-4 mt-12">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="rounded-full border-white/10 hover:bg-primary/10"
+                        disabled={openPage === 1}
+                        onClick={() => setOpenPage(p => Math.max(1, p - 1))}
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </Button>
+                      <div className="flex gap-2">
+                        {Array.from({ length: Math.ceil(filteredOpenRoles.length / ITEMS_PER_PAGE) }).map((_, i) => (
+                          <Button 
+                            key={i} 
+                            variant={openPage === i + 1 ? "default" : "outline"}
+                            size="sm"
+                            className="w-10 h-10 rounded-full border-white/10"
+                            onClick={() => setOpenPage(i + 1)}
+                          >
+                            {i + 1}
+                          </Button>
+                        ))}
                       </div>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="rounded-full border-white/10 hover:bg-primary/10"
+                        disabled={openPage === Math.ceil(filteredOpenRoles.length / ITEMS_PER_PAGE)}
+                        onClick={() => setOpenPage(p => p + 1)}
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                  )}
+                </>
+              ) : (
+                <div className="py-20 text-center space-y-4 bg-secondary/10 rounded-2xl border border-dashed border-white/10">
+                  <Search className="w-12 h-12 text-muted-foreground mx-auto opacity-20" />
+                  <p className="text-muted-foreground text-lg italic">No roles found matching your search criteria.</p>
+                  <Button variant="link" onClick={() => setSearchTerm("")} className="text-primary font-bold">Clear all filters</Button>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="closed" className="space-y-4 mt-0">
-              {closedRoles.map((role, idx) => (
-                <div key={idx} className="p-6 rounded-xl border border-dashed border-white/10 bg-white/5 flex justify-between items-center opacity-60">
+              {paginatedClosedRoles.map((role, idx) => (
+                <div key={idx} className="p-6 rounded-xl border border-dashed border-white/10 bg-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 opacity-60">
                   <div className="space-y-1">
                     <h4 className="text-lg font-bold line-through text-muted-foreground">{role.title}</h4>
                     <p className="text-xs text-muted-foreground">{role.department}</p>
                   </div>
                   <Badge variant="outline" className="flex items-center gap-1 border-white/10 text-muted-foreground">
-                    <Lock className="w-3 h-3" /> Filled {role.closedDate}
+                    <Lock className="w-3 h-3" /> Filled {new Date(role.closedDate).toLocaleDateString()}
                   </Badge>
                 </div>
               ))}
+
+              {/* Pagination Closed Roles */}
+              {closedRoles.length > ITEMS_PER_PAGE && (
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="rounded-full border-white/10"
+                    disabled={closedPage === 1}
+                    onClick={() => setClosedPage(p => Math.max(1, p - 1))}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <div className="flex gap-2">
+                    {Array.from({ length: Math.ceil(closedRoles.length / ITEMS_PER_PAGE) }).map((_, i) => (
+                      <Button 
+                        key={i} 
+                        variant={closedPage === i + 1 ? "secondary" : "outline"}
+                        size="sm"
+                        className="w-10 h-10 rounded-full border-white/10"
+                        onClick={() => setClosedPage(i + 1)}
+                      >
+                        {i + 1}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="rounded-full border-white/10"
+                    disabled={closedPage === Math.ceil(closedRoles.length / ITEMS_PER_PAGE)}
+                    onClick={() => setClosedPage(p => p + 1)}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
