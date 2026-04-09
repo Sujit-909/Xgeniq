@@ -35,7 +35,6 @@ import {
   ArrowRight, 
   Quote, 
   Heart, 
-  Users, 
   Zap,
   Lock,
   ChevronRight,
@@ -45,7 +44,10 @@ import {
   Phone,
   Linkedin,
   FileText,
-  Info
+  Info,
+  Building2,
+  Globe,
+  Users
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
@@ -54,16 +56,18 @@ const openRoles = [
     jobId: "XG-ENT-2024-01",
     title: "Senior SAP BTP Consultant",
     department: "Enterprise Solutions",
-    location: "Remote / Cuttack",
+    location: "Cuttack / Remote",
+    workMode: "Hybrid",
     type: "Full-time",
     experience: "5+ Years",
     skills: ["CAPM", "ABAP RAP", "SAP Fiori", "OData"],
-    jd: "Architecting scalable extensions using CAPM and RAP. Leading side-by-side extensibility projects for global Fortune 500 clients.",
+    summary: "Architecting scalable extensions using CAPM and RAP for global Fortune 500 clients.",
+    jd: "As a Senior SAP BTP Consultant at XgenIq, you will be at the forefront of digital transformation. You will architect and implement cloud-native applications and side-by-side extensions, ensuring our clients leverage the full potential of the SAP Business Technology Platform.",
     responsibilities: [
-      "Design and develop cloud-native applications on SAP BTP.",
-      "Implement side-by-side extensions for SAP S/4HANA.",
-      "Lead technical workshops with international clients.",
-      "Mentor junior consultants and ensure code quality."
+      "Design and develop cloud-native applications on SAP BTP using CAPM and RAP.",
+      "Implement side-by-side extensions for SAP S/4HANA systems.",
+      "Lead technical workshops and define architectural patterns for international clients.",
+      "Mentor junior consultants and drive best practices in code quality and DevOps."
     ]
   },
   {
@@ -71,31 +75,35 @@ const openRoles = [
     title: "AI/ML Engineer (GenAI)",
     department: "AI Innovation Lab",
     location: "Cuttack, Odisha",
+    workMode: "Office",
     type: "Full-time",
     experience: "3+ Years",
     skills: ["Python", "LangChain", "Vector DBs", "LLMs"],
-    jd: "Developing RAG-based applications and autonomous SQL agents. Implementing state-of-the-art LLM solutions for enterprise automation.",
+    summary: "Developing RAG-based applications and autonomous agents for enterprise automation.",
+    jd: "Join our AI Innovation Lab to build the next generation of enterprise intelligence. You will work on cutting-edge Generative AI projects, from RAG pipelines to autonomous agents that solve complex business challenges.",
     responsibilities: [
-      "Build and optimize RAG pipelines for enterprise knowledge bases.",
-      "Develop custom agents using LangChain or similar frameworks.",
-      "Integrate AI models into existing enterprise software architectures.",
-      "Stay current with the latest advancements in LLM technology."
+      "Build and optimize RAG pipelines for enterprise knowledge management.",
+      "Develop custom autonomous agents using frameworks like LangChain or AutoGen.",
+      "Integrate LLMs into existing enterprise software ecosystems securely.",
+      "Collaborate with data engineers to build robust data ingestion and processing pipelines."
     ]
   },
   {
     jobId: "XG-WEB-2024-03",
     title: "Senior React Developer",
     department: "Digital Delivery",
-    location: "Remote",
+    location: "Global",
+    workMode: "Remote",
     type: "Contract",
     experience: "4+ Years",
     skills: ["Next.js", "TypeScript", "Tailwind CSS", "Redux"],
-    jd: "Building complex, performant web dashboards with Next.js and TypeScript. Ensuring pixel-perfect UI/UX and accessible design systems.",
+    summary: "Building complex, performant web dashboards and accessible design systems.",
+    jd: "We are looking for a Senior React Developer who is passionate about performance and UX. You will lead the development of high-impact web applications, ensuring they are scalable, accessible, and fast.",
     responsibilities: [
-      "Develop high-performance frontends for data-heavy applications.",
-      "Collaborate with designers to implement pixel-perfect UIs.",
-      "Optimize web applications for maximum speed and scalability.",
-      "Conduct thorough code reviews and maintain documentation."
+      "Develop high-performance frontends for data-intensive enterprise applications.",
+      "Collaborate with UI/UX designers to implement pixel-perfect, responsive interfaces.",
+      "Implement robust state management and optimize application performance.",
+      "Drive the adoption of modern frontend practices like Server Components and advanced testing."
     ]
   }
 ];
@@ -162,6 +170,15 @@ export function Careers() {
     setSelectedJob(null);
   };
 
+  const getWorkModeIcon = (mode: string) => {
+    switch (mode) {
+      case 'Remote': return <Globe className="w-3.5 h-3.5" />;
+      case 'Office': return <Building2 className="w-3.5 h-3.5" />;
+      case 'Hybrid': return <MapPin className="w-3.5 h-3.5" />;
+      default: return <Briefcase className="w-3.5 h-3.5" />;
+    }
+  };
+
   return (
     <section id="careers" className="py-24 bg-background relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(234,179,8,0.03),transparent)] pointer-events-none" />
@@ -190,23 +207,29 @@ export function Careers() {
                 <Card key={idx} className="glass-card border-white/5 bg-card/10 hover:bg-card/30 transition-all group overflow-hidden">
                   <CardContent className="p-8">
                     <div className="flex flex-col lg:flex-row gap-8 lg:items-center">
-                      <div className="flex-1 space-y-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <Briefcase className="w-4 h-4 text-primary" />
-                              <h4 className="text-2xl font-bold text-foreground">{role.title}</h4>
+                      <div className="flex-1 space-y-6">
+                        <div className="space-y-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="space-y-1">
+                              <h4 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">{role.title}</h4>
+                              <div className="flex items-center gap-3 text-xs font-mono text-muted-foreground">
+                                <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">{role.jobId}</span>
+                                <span>{role.department}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2 text-xs font-mono text-primary/70">
-                              <span className="bg-primary/10 px-2 py-0.5 rounded">{role.jobId}</span>
-                              <span className="text-muted-foreground">•</span>
-                              <span>{role.department}</span>
+                            <div className="flex flex-wrap gap-2">
+                              <Badge variant="outline" className="bg-white/5 border-white/10 flex items-center gap-1.5 py-1 px-3 rounded-full">
+                                {getWorkModeIcon(role.workMode)} {role.workMode}
+                              </Badge>
+                              <Badge variant="outline" className="bg-white/5 border-white/10 flex items-center gap-1.5 py-1 px-3 rounded-full">
+                                <Clock className="w-3.5 h-3.5" /> {role.type}
+                              </Badge>
                             </div>
                           </div>
-                          <div className="flex flex-wrap gap-3 text-xs font-medium text-muted-foreground">
-                            <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full"><MapPin className="w-3.5 h-3.5 text-primary" /> {role.location}</span>
-                            <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full"><Clock className="w-3.5 h-3.5 text-primary" /> {role.type}</span>
-                          </div>
+
+                          <p className="text-muted-foreground leading-relaxed max-w-2xl">
+                            {role.summary}
+                          </p>
                         </div>
 
                         <div className="flex flex-wrap gap-2">
@@ -234,61 +257,73 @@ export function Careers() {
                               <DialogTitle className="text-3xl font-headline font-bold">
                                 {role.title}
                               </DialogTitle>
-                              <DialogDescription className="text-primary font-medium flex items-center gap-4 mt-2">
-                                <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {role.location}</span>
-                                <span className="flex items-center gap-1"><Briefcase className="w-4 h-4" /> {role.type}</span>
-                                <span className="flex items-center gap-1"><ChevronRight className="w-4 h-4" /> {role.experience}</span>
-                              </DialogDescription>
+                              <div className="flex flex-wrap items-center gap-4 mt-3">
+                                <span className="flex items-center gap-1.5 text-sm text-primary font-medium">
+                                  {getWorkModeIcon(role.workMode)} {role.location} ({role.workMode})
+                                </span>
+                                <span className="text-muted-foreground">•</span>
+                                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                  <Briefcase className="w-4 h-4" /> {role.type}
+                                </span>
+                                <span className="text-muted-foreground">•</span>
+                                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                  <ChevronRight className="w-4 h-4" /> {role.experience}
+                                </span>
+                              </div>
                             </DialogHeader>
-                            <div className="space-y-6 py-6 border-t border-white/5 mt-6">
+                            
+                            <div className="space-y-8 py-8 border-t border-white/5 mt-6">
                               <div className="space-y-3">
                                 <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
-                                  <FileText className="w-5 h-5" /> Job Summary
+                                  <FileText className="w-5 h-5" /> Detailed Description
                                 </h5>
-                                <p className="text-muted-foreground leading-relaxed">
+                                <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                                   {role.jd}
                                 </p>
                               </div>
-                              <div className="space-y-3">
+
+                              <div className="space-y-4">
                                 <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
-                                  <Zap className="w-5 h-5" /> Key Responsibilities
+                                  <Zap className="w-5 h-5" /> Core Responsibilities
                                 </h5>
-                                <ul className="grid gap-2">
+                                <ul className="grid gap-3">
                                   {role.responsibilities.map((item, i) => (
-                                    <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm">
+                                    <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm leading-relaxed">
                                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                                       {item}
                                     </li>
                                   ))}
                                 </ul>
                               </div>
-                              <div className="space-y-3">
+
+                              <div className="space-y-4">
                                 <h5 className="text-lg font-bold flex items-center gap-2 text-primary">
-                                  <Briefcase className="w-5 h-5" /> Required Skills
+                                  <Briefcase className="w-5 h-5" /> Preferred Tech Stack
                                 </h5>
                                 <div className="flex flex-wrap gap-2">
                                   {role.skills.map((skill) => (
-                                    <Badge key={skill} className="bg-secondary text-foreground border-none">
+                                    <Badge key={skill} className="bg-secondary/50 text-foreground border border-white/5 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default">
                                       {skill}
                                     </Badge>
                                   ))}
                                 </div>
                               </div>
                             </div>
-                            <DialogFooter className="border-t border-white/5 pt-6">
+
+                            <DialogFooter className="border-t border-white/5 pt-6 flex-col sm:flex-row gap-4">
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button className="w-full rounded-full py-6 font-bold text-lg">
-                                    Apply for this Position
+                                  <Button className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
+                                    Apply Now
                                   </Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-[600px] bg-background border-white/10 text-foreground overflow-y-auto max-h-[90vh]">
                                   <DialogHeader>
                                     <DialogTitle className="text-2xl font-headline font-bold">
-                                      Application for <span className="text-primary">{role.title}</span>
+                                      Application: <span className="text-primary">{role.title}</span>
                                     </DialogTitle>
                                     <DialogDescription className="text-muted-foreground">
-                                      Complete the form below and attach your CV.
+                                      Join the XgenIq innovation hub. Complete the form below.
                                     </DialogDescription>
                                   </DialogHeader>
                                   <form onSubmit={handleApplySubmit} className="space-y-6 py-4">
@@ -313,15 +348,16 @@ export function Careers() {
                                       </div>
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="cover" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro / Cover Note</Label>
-                                      <Textarea id="cover" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" />
+                                      <Label htmlFor="cover" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
+                                      <Textarea id="cover" placeholder="What makes you a great fit?" className="min-h-[100px] bg-secondary/50 border-white/10" />
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="cv" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF only)</Label>
-                                      <div className="border-2 border-dashed border-white/10 rounded-lg p-6 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
+                                      <Label htmlFor="cv" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
+                                      <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
                                         <Input id="cv" type="file" accept=".pdf" className="hidden" />
-                                        <Upload className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
-                                        <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+                                        <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
+                                        <p className="text-sm font-medium">Click to upload CV</p>
+                                        <p className="text-xs text-muted-foreground mt-1">PDF format preferred</p>
                                       </div>
                                     </div>
                                     <DialogFooter>
@@ -349,43 +385,43 @@ export function Careers() {
                           <DialogContent className="sm:max-w-[600px] bg-background border-white/10 text-foreground overflow-y-auto max-h-[90vh]">
                             <DialogHeader>
                               <DialogTitle className="text-2xl font-headline font-bold">
-                                Application for <span className="text-primary">{selectedJob?.title}</span>
+                                Application: <span className="text-primary">{selectedJob?.title}</span>
                               </DialogTitle>
                               <DialogDescription className="text-muted-foreground">
-                                Complete the form below to join the XgenIq innovation hub.
+                                Ready to join XgenIq? Tell us more about yourself.
                               </DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleApplySubmit} className="space-y-6 py-4">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                  <Label htmlFor="name" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
-                                  <Input id="name" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
+                                  <Label htmlFor="name-quick" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
+                                  <Input id="name-quick" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label htmlFor="email" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
-                                  <Input id="email" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
+                                  <Label htmlFor="email-quick" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
+                                  <Input id="email-quick" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
                                 </div>
                               </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                  <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
-                                  <Input id="phone" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
+                                  <Label htmlFor="phone-quick" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
+                                  <Input id="phone-quick" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label htmlFor="linkedin" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
-                                  <Input id="linkedin" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
+                                  <Label htmlFor="linkedin-quick" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
+                                  <Input id="linkedin-quick" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
                                 </div>
                               </div>
                               <div className="space-y-2">
-                                <Label htmlFor="cover" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro / Cover Note</Label>
-                                <Textarea id="cover" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" />
+                                <Label htmlFor="cover-quick" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
+                                <Textarea id="cover-quick" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" />
                               </div>
                               <div className="space-y-2">
-                                <Label htmlFor="cv" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF only)</Label>
-                                <div className="border-2 border-dashed border-white/10 rounded-lg p-6 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
-                                  <Input id="cv" type="file" accept=".pdf" className="hidden" />
-                                  <Upload className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
-                                  <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+                                <Label htmlFor="cv-quick" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
+                                <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
+                                  <Input id="cv-quick" type="file" accept=".pdf" className="hidden" />
+                                  <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
+                                  <p className="text-sm font-medium">Click to upload CV</p>
                                 </div>
                               </div>
                               <DialogFooter>
