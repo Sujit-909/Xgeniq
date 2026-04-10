@@ -57,7 +57,9 @@ import {
   Users,
   Search,
   ChevronLeft,
-  CalendarDays
+  CalendarDays,
+  Trophy,
+  Milestone
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
@@ -166,25 +168,33 @@ const employeeTestimonials = [
   {
     name: "Rajesh Kumar",
     role: "Lead SAP Consultant",
-    text: "At XgenIq, I've had the chance to work on cutting-edge SAP BTP projects that truly challenge my technical boundaries. The culture of innovation is unmatched.",
+    text: "At XgenIq, I've had the chance to work on cutting-edge SAP BTP projects that truly challenge my technical boundaries.",
+    journey: "I started as an Associate Consultant 5 years ago. XgenIq provided the perfect platform to transition from legacy ABAP to modern cloud-native BTP architectures.",
+    achievements: ["Certified SAP BTP Architect", "Led 5+ S/4HANA Public Cloud Migrations", "Technical Excellence Award 2023"],
     imageId: "emp-1"
   },
   {
     name: "Anita Sharma",
     role: "Senior AI Architect",
     text: "Building RAG-based applications for global enterprises at XgenIq has been an incredible journey. We don't just follow trends; we set them.",
+    journey: "Joined XgenIq with a background in traditional ML. Within two years, I spearheaded our GenAI research initiative and now lead a team of 10+ AI engineers.",
+    achievements: ["Published 3 AI Research Papers", "Developed XgenIq's Core RAG Framework", "Speaker at Global AI Summits"],
     imageId: "emp-2"
   },
   {
     name: "Sanjay Mohanty",
     role: "Digital Solutions Lead",
     text: "The ownership and flexibility provided here allow me to deliver high-impact solutions while maintaining a great work-life balance.",
+    journey: "Came from a large MNC looking for more ownership. At XgenIq, I managed full-lifecycle delivery of complex portals within my first year.",
+    achievements: ["100% Client Satisfaction Score", "Optimized Deployment Cycles by 40%", "Mentor of the Year 2023"],
     imageId: "emp-1"
   },
   {
     name: "Priyanka Dash",
     role: "UI/UX Specialist",
     text: "Design is at the heart of everything we build. Working here gives me the creative freedom to redefine enterprise interfaces.",
+    journey: "Started as a Graphic Designer and evolved into a UI/UX Lead, focusing on how design can simplify complex SAP workflows.",
+    achievements: ["Redesigned 20+ Enterprise Dashboards", "Winner of Best App Design Award", "Created XgenIq's Internal Design System"],
     imageId: "emp-2"
   }
 ];
@@ -206,7 +216,7 @@ export function Careers() {
   const [closedPage, setClosedPage] = useState(1);
 
   const plugin = React.useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true })
+    Autoplay({ delay: 5000, stopOnInteraction: true })
   );
 
   const filteredOpenRoles = useMemo(() => {
@@ -274,7 +284,8 @@ export function Careers() {
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto space-y-12 mb-24">
+        {/* Career Opportunities */}
+        <div className="max-w-5xl mx-auto space-y-12 mb-32">
           <Tabs defaultValue="open" className="w-full">
             <div className="flex flex-col gap-8 mb-10">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -658,15 +669,16 @@ export function Careers() {
           </Tabs>
         </div>
 
-        <div className="space-y-12 mb-24">
+        {/* Employee Stories - Detailed Card with Achievements and Journey */}
+        <div className="space-y-12 mb-32">
           <div className="text-center space-y-4">
             <h3 className="text-3xl font-headline font-bold">Employee <span className="text-primary">Stories</span></h3>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Hear directly from our team leads and consultants about their growth journey at XgenIq.</p>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Hear directly from our team leads and consultants about their growth journey, achievements, and technical milestones at XgenIq.</p>
           </div>
           
           <Carousel 
             plugins={[plugin.current]}
-            className="w-full max-w-6xl mx-auto"
+            className="w-full max-w-7xl mx-auto"
             onMouseEnter={plugin.current.stop}
             onMouseLeave={plugin.current.reset}
             opts={{
@@ -679,12 +691,43 @@ export function Careers() {
                 const image = PlaceHolderImages.find(img => img.id === emp.imageId);
                 return (
                   <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                    <Card className="h-full border-white/5 bg-card/20 glass-card group hover:bg-card/40 transition-all duration-500">
+                    <Card className="h-full border-white/5 bg-card/20 glass-card group hover:bg-card/40 transition-all duration-500 flex flex-col">
                       <CardContent className="p-8 flex flex-col h-full space-y-6">
-                        <Quote className="w-12 h-12 text-primary/10 group-hover:text-primary/20 transition-colors" />
-                        <p className="text-lg text-foreground/90 italic leading-relaxed flex-1">
-                          "{emp.text}"
-                        </p>
+                        <Quote className="w-10 h-10 text-primary/20 mb-2" />
+                        
+                        <div className="flex-1 space-y-6">
+                          {/* Testimonial Text */}
+                          <p className="text-lg text-foreground/90 italic font-medium leading-relaxed">
+                            "{emp.text}"
+                          </p>
+
+                          {/* Journey Section */}
+                          <div className="space-y-3">
+                            <h5 className="text-sm font-bold flex items-center gap-2 text-primary uppercase tracking-widest">
+                              <Milestone className="w-4 h-4" /> My Journey
+                            </h5>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {emp.journey}
+                            </p>
+                          </div>
+
+                          {/* Achievements Section */}
+                          <div className="space-y-3">
+                            <h5 className="text-sm font-bold flex items-center gap-2 text-accent uppercase tracking-widest">
+                              <Trophy className="w-4 h-4" /> Top Achievements
+                            </h5>
+                            <div className="flex flex-col gap-2">
+                              {emp.achievements.map((ach, i) => (
+                                <div key={i} className="flex items-start gap-2 text-xs text-foreground/80 bg-white/5 p-2 rounded border border-white/5">
+                                  <ChevronRight className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                                  <span>{ach}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Employee Bio Footer */}
                         <div className="flex items-center gap-4 pt-6 border-t border-white/5">
                           <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary/50 transition-colors">
                             <Image 
@@ -712,6 +755,7 @@ export function Careers() {
           </Carousel>
         </div>
 
+        {/* Life at XgenIq Section */}
         <div className="pt-12 space-y-12 border-t border-white/5">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="space-y-2">
