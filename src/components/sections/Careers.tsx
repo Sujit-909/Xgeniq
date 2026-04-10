@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useMemo } from 'react';
@@ -59,7 +58,9 @@ import {
   ChevronLeft,
   CalendarDays,
   Trophy,
-  Milestone
+  Milestone,
+  Smile,
+  Rocket
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
@@ -756,40 +757,65 @@ export function Careers() {
         </div>
 
         {/* Life at XgenIq Section */}
-        <div className="pt-12 space-y-12 border-t border-white/5">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div className="space-y-2">
-              <h3 className="text-3xl font-headline font-bold">Life at <span className="text-primary">XgenIq</span></h3>
-              <p className="text-muted-foreground">Beyond the code: building a community of excellence and fun.</p>
+        <div className="pt-16 space-y-16 border-t border-white/5">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <div className="space-y-4">
+              <Badge variant="outline" className="border-accent/30 text-accent uppercase tracking-tighter">Experience Our Culture</Badge>
+              <h3 className="text-4xl md:text-5xl font-headline font-bold">Life at <span className="text-primary">XgenIq</span></h3>
             </div>
-            <div className="flex gap-8">
-              {[
-                { icon: Heart, title: "Wellness First" },
-                { icon: Zap, title: "Learning Fund" },
-                { icon: Users, title: "Global Team" }
-              ].map((perk, idx) => (
-                <div key={idx} className="flex items-center gap-2">
-                  <perk.icon className="w-5 h-5 text-primary" />
-                  <span className="text-sm font-bold">{perk.title}</span>
+            
+            <div className="glass-card p-8 md:p-12 rounded-3xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16 blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-1000" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/10 rounded-full -ml-16 -mb-16 blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-1000" />
+              
+              <div className="relative z-10 space-y-6">
+                <p className="text-xl md:text-2xl text-foreground font-medium leading-relaxed italic">
+                  "We believe that the growth of our company is driven by the growth of its people."
+                </p>
+                <div className="space-y-4 max-w-3xl mx-auto text-muted-foreground leading-relaxed text-base md:text-lg">
+                  <p>
+                    We foster an environment that offers continuous opportunities for self-development, empowering each member of our team to thrive. We don't believe in monotony.
+                  </p>
+                  <p>
+                    Life at XgenIq is a blend of hard work and fun, with a focus on creativity and camaraderie. From cracking jokes to battling boredom, we ensure every day is filled with energy and excitement, making our workplace not just a job, but a journey.
+                  </p>
                 </div>
-              ))}
+                
+                <div className="flex flex-wrap justify-center gap-6 pt-8">
+                  {[
+                    { icon: Heart, title: "Wellness First", color: "text-red-400" },
+                    { icon: Zap, title: "Learning Fund", color: "text-primary" },
+                    { icon: Users, title: "Global Team", color: "text-blue-400" },
+                    { icon: Smile, title: "Fun Culture", color: "text-accent" },
+                    { icon: Rocket, title: "Rapid Growth", color: "text-purple-400" }
+                  ].map((perk, idx) => (
+                    <div key={idx} className="flex items-center gap-2 bg-background/50 border border-white/5 px-4 py-2 rounded-full hover:border-primary/30 transition-colors">
+                      <perk.icon className={`w-4 h-4 ${perk.color}`} />
+                      <span className="text-sm font-bold whitespace-nowrap">{perk.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {lifeAtXgenIq.map((item, idx) => {
               const image = PlaceHolderImages.find(img => img.id === item.id);
               return (
-                <div key={idx} className="group relative aspect-video rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
+                <div key={idx} className="group relative aspect-[16/10] rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
                   <Image 
                     src={image?.imageUrl || `https://picsum.photos/seed/culture${idx}/600/600`}
                     alt={item.title}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
                     data-ai-hint={image?.imageHint || "office culture"}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                    <span className="text-lg font-bold text-primary">{item.title}</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
+                    <div className="space-y-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                      <span className="text-xs font-bold text-primary uppercase tracking-widest">Culture & Fun</span>
+                      <h4 className="text-xl font-bold text-white">{item.title}</h4>
+                    </div>
                   </div>
                 </div>
               );
