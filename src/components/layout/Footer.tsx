@@ -6,9 +6,11 @@ import Link from 'next/link';
 import { Cpu, Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
+
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
+  
   return (
     <footer className="bg-background border-t border-border pt-20 pb-10">
       <div className="container px-6 mx-auto">
