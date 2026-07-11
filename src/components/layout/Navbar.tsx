@@ -3,13 +3,16 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Cpu, Mail } from 'lucide-react';
+import Image from 'next/image';
+import { Menu, X, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const logo = PlaceHolderImages.find(img => img.id === 'app-logo');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,14 +34,18 @@ export function Navbar() {
   return (
     <nav className={cn(
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out px-6 py-4',
-      isScrolled ? 'bg-background/80 backdrop-blur-lg border-b border-border py-3' : 'bg-transparent'
+      isScrolled ? 'bg-background/80 backdrop-blur-lg border-b border-border py-2' : 'bg-transparent'
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="p-2 rounded-lg bg-primary group-hover:scale-110 transition-transform">
-            <Cpu className="w-6 h-6 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-headline font-bold tracking-tighter">XgenIq<span className="text-primary">.</span></span>
+        <Link href="/" className="relative h-12 w-48 group">
+          <Image 
+            src={logo?.imageUrl || 'https://picsum.photos/seed/logo/200/80'}
+            alt="XgenIq Logo"
+            fill
+            className="object-contain transition-transform group-hover:scale-105"
+            priority
+            data-ai-hint="company logo"
+          />
         </Link>
 
         {/* Desktop Nav */}

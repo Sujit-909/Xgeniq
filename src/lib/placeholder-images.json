@@ -1,6 +1,12 @@
 {
   "placeholderImages": [
     {
+      "id": "app-logo",
+      "description": "Official XgenIq Logo with gold X and tagline",
+      "imageUrl": "https://picsum.photos/seed/xgeniq-logo-new/600/400",
+      "imageHint": "corporate logo gold"
+    },
+    {
       "id": "hero-tech",
       "description": "Abstract futuristic digital architecture representing AI and software",
       "imageUrl": "https://picsum.photos/seed/tech-77/1200/800",

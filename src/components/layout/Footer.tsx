@@ -3,24 +3,28 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Cpu, Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
+import Image from 'next/image';
+import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-
+  const logo = PlaceHolderImages.find(img => img.id === 'app-logo');
   
   return (
     <footer className="bg-background border-t border-border pt-20 pb-10">
       <div className="container px-6 mx-auto">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary">
-                <Cpu className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-headline font-bold tracking-tighter">XgenIq<span className="text-primary">.</span></span>
+            <Link href="/" className="relative h-16 w-56 block">
+              <Image 
+                src={logo?.imageUrl || 'https://picsum.photos/seed/logo/200/80'}
+                alt="XgenIq Logo"
+                fill
+                className="object-contain object-left"
+                data-ai-hint="company logo"
+              />
             </Link>
             <p className="text-muted-foreground leading-relaxed">
               Global IT solutions provider specializing in SAP BTP, Enterprise AI, and Cloud Infrastructure. Delivering excellence from Cuttack, Odisha.
