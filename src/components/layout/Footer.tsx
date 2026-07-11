@@ -19,11 +19,11 @@ export function Footer() {
           <div className="space-y-6">
             <Link href="/" className="relative h-16 w-56 block">
               <Image 
-                src={logo?.imageUrl || 'https://picsum.photos/seed/logo/200/80'}
+                src={logo?.imageUrl || 'https://picsum.photos/seed/logo/800/200'}
                 alt="XgenIq Logo"
                 fill
                 className="object-contain object-left"
-                data-ai-hint="company logo"
+                data-ai-hint="company logo gold"
               />
             </Link>
             <p className="text-muted-foreground leading-relaxed">

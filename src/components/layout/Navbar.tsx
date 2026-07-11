@@ -39,12 +39,12 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link href="/" className="relative h-12 w-48 group">
           <Image 
-            src={logo?.imageUrl || 'https://picsum.photos/seed/logo/200/80'}
+            src={logo?.imageUrl || 'https://picsum.photos/seed/logo/800/200'}
             alt="XgenIq Logo"
             fill
             className="object-contain transition-transform group-hover:scale-105"
             priority
-            data-ai-hint="company logo"
+            data-ai-hint="company logo gold"
           />
         </Link>
 

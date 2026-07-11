@@ -2,8 +2,8 @@
   "placeholderImages": [
     {
       "id": "app-logo",
-      "description": "Official XgenIq Logo with gold X and tagline",
-      "imageUrl": "https://picsum.photos/seed/xgeniq-logo-new/600/400",
+      "description": "Official XgenIq Logo with gold and black corporate branding",
+      "imageUrl": "https://picsum.photos/seed/xgeniq-branding-logo/800/200",
       "imageHint": "corporate logo gold"
     },
     {
