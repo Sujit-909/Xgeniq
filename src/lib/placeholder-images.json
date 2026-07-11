@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "app-logo",
-      "description": "Official XgenIq Logo with gold and black corporate branding",
-      "imageUrl": "https://picsum.photos/seed/xgeniq-branding-logo/800/200",
-      "imageHint": "corporate logo gold"
+      "description": "XgenIq official branding: A prominent gold 'X' with tech pixel accents and corporate taglines on a dark background",
+      "imageUrl": "https://picsum.photos/seed/xgeniq-gold-brand/1200/800",
+      "imageHint": "gold tech logo"
     },
     {
       "id": "hero-tech",

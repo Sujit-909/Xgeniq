@@ -37,14 +37,14 @@ export function Navbar() {
       isScrolled ? 'bg-background/80 backdrop-blur-lg border-b border-border py-2' : 'bg-transparent'
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="relative h-12 w-48 group">
+        <Link href="/" className="relative h-14 w-48 group">
           <Image 
-            src={logo?.imageUrl || 'https://picsum.photos/seed/logo/800/200'}
+            src={logo?.imageUrl || 'https://picsum.photos/seed/xgeniq-brand/800/400'}
             alt="XgenIq Logo"
             fill
             className="object-contain transition-transform group-hover:scale-105"
             priority
-            data-ai-hint="company logo gold"
+            data-ai-hint="gold tech logo"
           />
         </Link>
 
