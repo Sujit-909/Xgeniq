@@ -3,28 +3,21 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const logo = PlaceHolderImages.find(img => img.id === 'app-logo');
   
   return (
     <footer className="bg-background border-t border-border pt-20 pb-10">
       <div className="container px-6 mx-auto">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
-            <Link href="/" className="relative h-16 w-56 block">
-              <Image 
-                src={logo?.imageUrl || 'https://picsum.photos/seed/logo/800/200'}
-                alt="XgenIq Logo"
-                fill
-                className="object-contain object-left"
-                data-ai-hint="company logo gold"
-              />
+            <Link href="/" className="group inline-block">
+              <span className="text-3xl font-sans font-bold tracking-tighter text-foreground">
+                Xgen<span className="text-primary">Iq</span>
+              </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed">
               Global IT solutions provider specializing in SAP BTP, Enterprise AI, and Cloud Infrastructure. Delivering excellence from Cuttack, Odisha.

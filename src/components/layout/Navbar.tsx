@@ -3,16 +3,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Menu, X, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const logo = PlaceHolderImages.find(img => img.id === 'app-logo');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,15 +34,10 @@ export function Navbar() {
       isScrolled ? 'bg-background/80 backdrop-blur-lg border-b border-border py-2' : 'bg-transparent'
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="relative h-14 w-48 group">
-          <Image 
-            src={logo?.imageUrl || 'https://picsum.photos/seed/xgeniq-brand/800/400'}
-            alt="XgenIq Logo"
-            fill
-            className="object-contain transition-transform group-hover:scale-105"
-            priority
-            data-ai-hint="gold tech logo"
-          />
+        <Link href="/" className="group flex items-center gap-1">
+          <span className="text-2xl font-sans font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform">
+            Xgen<span className="text-primary">Iq</span>
+          </span>
         </Link>
 
         {/* Desktop Nav */}
