@@ -5,9 +5,13 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
+
+  const logo = PlaceHolderImages.find(img => img.id === 'app-logo');
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
@@ -19,9 +23,21 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
             <Link href="/" className="group inline-block">
-              <span className="text-3xl font-sans font-bold tracking-tighter text-foreground">
-                Xgen<span className="text-primary">Iq</span>
-              </span>
+              {logo ? (
+                <div className="relative w-40 h-14 md:w-48 md:h-16 mb-2">
+                  <Image 
+                    src={logo.imageUrl} 
+                    alt="XgenIq Logo" 
+                    fill 
+                    className="object-contain"
+                    data-ai-hint="gold tech logo"
+                  />
+                </div>
+              ) : (
+                <span className="text-3xl font-sans font-bold tracking-tighter text-foreground">
+                  Xgen<span className="text-primary">Iq</span>
+                </span>
+              )}
             </Link>
             <p className="text-muted-foreground leading-relaxed">
               Global IT solutions provider specializing in SAP BTP, Enterprise AI, and Cloud Infrastructure. Delivering excellence from Cuttack, Odisha.
