@@ -24,10 +24,10 @@ export function Footer() {
           <div className="space-y-6">
             <Link href="/" className="group inline-block">
               {logo ? (
-                <div className="relative w-40 h-14 md:w-48 md:h-16 mb-2">
+                <div className="relative w-48 h-16 md:w-64 md:h-20 mb-2">
                   <Image 
                     src={logo.imageUrl} 
-                    alt="XgenIq Logo" 
+                    alt="XgenIq Technologies Logo" 
                     fill 
                     className="object-contain"
                     data-ai-hint="gold tech logo"

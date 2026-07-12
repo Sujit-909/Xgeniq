@@ -2,8 +2,8 @@
   "placeholderImages": [
     {
       "id": "app-logo",
-      "description": "XgenIq official branding: A prominent gold 'X' with tech pixel accents and corporate taglines on a dark background",
-      "imageUrl": "https://picsum.photos/seed/xgeniq-gold-brand/1200/800",
+      "description": "XgenIq professional branding: A gold 'X' with tech pixel accents and corporate name on a deep black background",
+      "imageUrl": "https://placehold.co/600x200/121212/EAB308?text=XgenIq+Technologies",
       "imageHint": "gold tech logo"
     },
     {
