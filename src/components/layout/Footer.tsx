@@ -1,13 +1,17 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
   
   return (
     <footer className="bg-background border-t border-border pt-20 pb-10">
@@ -86,7 +90,7 @@ export function Footer() {
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} XgenIq Technologies Pvt. Ltd. All Rights Reserved.
+            © {currentYear || '...'} XgenIq Technologies Pvt. Ltd. All Rights Reserved.
           </p>
           <div className="flex gap-8 text-sm text-muted-foreground">
             <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>

@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
@@ -215,6 +216,11 @@ export function Careers() {
   const [sortBy, setSortBy] = useState("newest");
   const [openPage, setOpenPage] = useState(1);
   const [closedPage, setClosedPage] = useState(1);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
@@ -269,6 +275,15 @@ export function Careers() {
       case 'Office': return <Building2 className="w-3.5 h-3.5" />;
       case 'Hybrid': return <MapPin className="w-3.5 h-3.5" />;
       default: return <Briefcase className="w-3.5 h-3.5" />;
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    if (!isMounted) return "...";
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return dateStr;
     }
   };
 
@@ -343,7 +358,9 @@ export function Careers() {
                                     <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-muted-foreground">
                                       <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">{role.jobId}</span>
                                       <span>{role.department}</span>
-                                      <span className="flex items-center gap-1 text-accent font-bold"><CalendarDays className="w-3 h-3" /> Posted {new Date(role.postedDate).toLocaleDateString()}</span>
+                                      <span className="flex items-center gap-1 text-accent font-bold">
+                                        <CalendarDays className="w-3 h-3" /> Posted {formatDate(role.postedDate)}
+                                      </span>
                                     </div>
                                   </div>
                                   <div className="flex flex-wrap gap-2">
@@ -625,7 +642,7 @@ export function Careers() {
                     <p className="text-xs text-muted-foreground">{role.department}</p>
                   </div>
                   <Badge variant="outline" className="flex items-center gap-1 border-white/10 text-muted-foreground">
-                    <Lock className="w-3 h-3" /> Filled {new Date(role.closedDate).toLocaleDateString()}
+                    <Lock className="w-3 h-3" /> Filled {formatDate(role.closedDate)}
                   </Badge>
                 </div>
               ))}
@@ -670,7 +687,7 @@ export function Careers() {
           </Tabs>
         </div>
 
-        {/* Employee Stories - Detailed Card with Achievements and Journey */}
+        {/* Employee Stories */}
         <div className="space-y-12 mb-32">
           <div className="text-center space-y-4">
             <h3 className="text-3xl font-headline font-bold">Employee <span className="text-primary">Stories</span></h3>
@@ -697,12 +714,10 @@ export function Careers() {
                         <Quote className="w-10 h-10 text-primary/20 mb-2" />
                         
                         <div className="flex-1 space-y-6">
-                          {/* Testimonial Text */}
                           <p className="text-lg text-foreground/90 italic font-medium leading-relaxed">
                             "{emp.text}"
                           </p>
 
-                          {/* Journey Section */}
                           <div className="space-y-3">
                             <h5 className="text-sm font-bold flex items-center gap-2 text-primary uppercase tracking-widest">
                               <Milestone className="w-4 h-4" /> My Journey
@@ -712,7 +727,6 @@ export function Careers() {
                             </p>
                           </div>
 
-                          {/* Achievements Section */}
                           <div className="space-y-3">
                             <h5 className="text-sm font-bold flex items-center gap-2 text-accent uppercase tracking-widest">
                               <Trophy className="w-4 h-4" /> Top Achievements
@@ -728,7 +742,6 @@ export function Careers() {
                           </div>
                         </div>
 
-                        {/* Employee Bio Footer */}
                         <div className="flex items-center gap-4 pt-6 border-t border-white/5">
                           <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary/50 transition-colors">
                             <Image 
