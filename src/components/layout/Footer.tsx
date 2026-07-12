@@ -30,6 +30,7 @@ export function Footer() {
                     alt="XgenIq Technologies Logo" 
                     fill 
                     className="object-contain"
+                    sizes="(max-width: 768px) 192px, 256px"
                     data-ai-hint="gold tech logo"
                   />
                 </div>

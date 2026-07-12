@@ -47,6 +47,7 @@ export function Navbar() {
                 fill 
                 priority
                 className="object-contain"
+                sizes="(max-width: 768px) 160px, 224px"
                 data-ai-hint="gold tech logo"
               />
             </div>
