@@ -1,10 +1,9 @@
-
 "use client";
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Linkedin, Mail, Target, ArrowRight, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Linkedin, Mail, Target, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export function Leadership() {
