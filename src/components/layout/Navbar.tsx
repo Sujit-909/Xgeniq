@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Mail, ChevronDown, Youtube, Instagram, Linkedin, Twitter, MessageCircle } from 'lucide-react';
+import { Menu, X, Mail, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
@@ -42,8 +42,8 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-6">
-          <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Home</Link>
-          <Link href="#about" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">About Us</Link>
+          <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" suppressHydrationWarning>Home</Link>
+          <Link href="#about" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" suppressHydrationWarning>About Us</Link>
           
           {/* SAP Solutions Dropdown */}
           <DropdownMenu>
@@ -55,30 +55,30 @@ export function Navbar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-background/95 border-border backdrop-blur-lg">
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="hover:text-primary">SAP S/4HANA</DropdownMenuSubTrigger>
+                <DropdownMenuSubTrigger className="hover:text-primary" suppressHydrationWarning>SAP S/4HANA</DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent className="bg-background/95 border-border backdrop-blur-lg">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem suppressHydrationWarning>
                       <Link href="#inquiry" className="w-full">RISE with SAP</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem suppressHydrationWarning>
                       <Link href="#inquiry" className="w-full">GROW with SAP</Link>
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
-              <DropdownMenuItem>
+              <DropdownMenuItem suppressHydrationWarning>
                 <Link href="#services" className="w-full">SAP BTP</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem suppressHydrationWarning>
                 <Link href="#services" className="w-full">SAP Integration Suite</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link href="#technology" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Training</Link>
-          <Link href="#services" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Services</Link>
-          <Link href="#about" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Industries</Link>
+          <Link href="#technology" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" suppressHydrationWarning>Training</Link>
+          <Link href="#services" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" suppressHydrationWarning>Services</Link>
+          <Link href="#industries" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" suppressHydrationWarning>Industries</Link>
 
           {/* Blog / Resources Dropdown */}
           <DropdownMenu>
@@ -89,20 +89,20 @@ export function Navbar() {
               Blog / Resources <ChevronDown className="w-4 h-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-background/95 border-border backdrop-blur-lg">
-              <DropdownMenuItem>
+              <DropdownMenuItem suppressHydrationWarning>
                 <Link href="#blog" className="w-full">Blog</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem suppressHydrationWarning>
                 <Link href="#case-studies" className="w-full">Case Studies</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem suppressHydrationWarning>
                 <Link href="#blog" className="w-full">Innovation</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link href="#careers" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Careers</Link>
-          <Link href="#inquiry" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Contact Us</Link>
+          <Link href="#careers" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" suppressHydrationWarning>Careers</Link>
+          <Link href="#inquiry" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" suppressHydrationWarning>Contact Us</Link>
 
           <div className="flex items-center gap-3 ml-4">
             <Button variant="default" size="sm" asChild className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
@@ -132,29 +132,38 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 right-0 bg-background border-b border-border p-6 animate-in slide-in-from-top duration-300 shadow-2xl max-h-[80vh] overflow-y-auto">
           <div className="flex flex-col gap-4">
-            {['Home', 'About Us', 'Training', 'Services', 'Industries', 'Careers', 'Contact Us'].map((name) => (
+            {[
+              { name: 'Home', href: '/' },
+              { name: 'About Us', href: '#about' },
+              { name: 'Training', href: '#technology' },
+              { name: 'Services', href: '#services' },
+              { name: 'Industries', href: '#industries' },
+              { name: 'Careers', href: '#careers' },
+              { name: 'Contact Us', href: '#inquiry' }
+            ].map((item) => (
               <Link 
-                key={name} 
-                href={`#${name.toLowerCase().replace(' ', '')}`}
+                key={item.name} 
+                href={item.href}
                 className="text-lg font-medium py-3 border-b border-border/50"
                 onClick={() => setIsMobileMenuOpen(false)}
+                suppressHydrationWarning
               >
-                {name}
+                {item.name}
               </Link>
             ))}
             <div className="py-3 border-b border-border/50">
               <p className="text-xs font-bold text-primary uppercase mb-2">SAP Solutions</p>
               <div className="pl-4 flex flex-col gap-3">
-                <Link href="#inquiry" className="text-sm" onClick={() => setIsMobileMenuOpen(false)}>RISE with SAP</Link>
-                <Link href="#inquiry" className="text-sm" onClick={() => setIsMobileMenuOpen(false)}>GROW with SAP</Link>
+                <Link href="#inquiry" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>RISE with SAP</Link>
+                <Link href="#inquiry" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>GROW with SAP</Link>
               </div>
             </div>
             <div className="py-3 border-b border-border/50">
               <p className="text-xs font-bold text-primary uppercase mb-2">Blog / Resources</p>
               <div className="pl-4 flex flex-col gap-3">
-                <Link href="#blog" className="text-sm" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                <Link href="#case-studies" className="text-sm" onClick={() => setIsMobileMenuOpen(false)}>Case Studies</Link>
-                <Link href="#blog" className="text-sm" onClick={() => setIsMobileMenuOpen(false)}>Innovation</Link>
+                <Link href="#blog" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>Blog</Link>
+                <Link href="#case-studies" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>Case Studies</Link>
+                <Link href="#blog" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>Innovation</Link>
               </div>
             </div>
             <Button className="w-full mt-4 rounded-full py-6 text-lg" asChild onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>
