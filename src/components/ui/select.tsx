@@ -83,6 +83,7 @@ const SelectContent = React.forwardRef<
         className
       )}
       position={position}
+      suppressHydrationWarning
       {...props}
     >
       <SelectScrollUpButton />

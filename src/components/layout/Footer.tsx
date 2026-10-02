@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -40,9 +41,9 @@ export function Footer() {
           <div>
             <h4 className="font-headline font-bold text-lg mb-6">Expertise</h4>
             <ul className="space-y-4">
-              {['SAP BTP Consulting', 'AI & ML Solutions', 'Cloud Infrastructure', 'Digital Products', 'Staffing Services', 'Careers'].map((item) => (
+              {['SAP Services', 'Software Engineering', 'Cloud & DevOps', 'Data & Analytics', 'AI & GenAI', 'Integration'].map((item) => (
                 <li key={item}>
-                  <Link href={item === 'Careers' ? '#careers' : '#services'} className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#services" className="text-muted-foreground hover:text-primary transition-colors">
                     {item}
                   </Link>
                 </li>
@@ -97,7 +98,7 @@ export function Footer() {
           <div className="flex gap-8 text-sm text-muted-foreground">
             <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
             <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
-            <Link href="#" className="hover:text-primary transition-colors">Careers</Link>
+            <Link href="#careers" className="hover:text-primary transition-colors">Careers</Link>
           </div>
         </div>
       </div>

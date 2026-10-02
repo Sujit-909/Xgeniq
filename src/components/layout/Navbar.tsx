@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -22,11 +21,11 @@ export function Navbar() {
 
   const navLinks = [
     { name: 'Services', href: '#services' },
+    { name: 'About', href: '#about' },
     { name: 'Products', href: '#products' },
-    { name: 'Success Stories', href: '#case-studies' },
+    { name: 'Technology', href: '#technology' },
     { name: 'Insights', href: '#blog' },
     { name: 'Careers', href: '#careers' },
-    { name: 'About', href: '#about' },
   ];
 
   return (
@@ -40,7 +39,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link 
               key={link.name} 
@@ -50,20 +49,20 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-4">
             <Button variant="ghost" size="icon" asChild className="rounded-full hover:bg-primary/10 group/contact">
               <Link href="#inquiry" title="Contact Us">
                 <Mail className="w-5 h-5 text-muted-foreground group-hover/contact:text-primary transition-colors" />
               </Link>
             </Button>
             <Button variant="default" size="sm" asChild className="rounded-full shadow-lg shadow-primary/20">
-              <Link href="#inquiry">Get a Quote</Link>
+              <Link href="#inquiry">Talk to an Expert</Link>
             </Button>
           </div>
         </div>
 
         {/* Mobile Section */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <Button variant="ghost" size="icon" asChild className="rounded-full">
             <Link href="#inquiry" title="Contact Us">
               <Mail className="w-5 h-5 text-primary" />
@@ -80,7 +79,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-border p-6 animate-in slide-in-from-top duration-300 shadow-2xl">
+        <div className="lg:hidden absolute top-full left-0 right-0 bg-background border-b border-border p-6 animate-in slide-in-from-top duration-300 shadow-2xl">
           <div className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link 
@@ -93,7 +92,7 @@ export function Navbar() {
               </Link>
             ))}
             <Button className="w-full mt-4 rounded-full py-6 text-lg" asChild onClick={() => setIsMobileMenuOpen(false)}>
-              <Link href="#inquiry">Get a Quote</Link>
+              <Link href="#inquiry">Talk to an Expert</Link>
             </Button>
           </div>
         </div>

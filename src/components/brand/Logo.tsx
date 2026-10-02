@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +29,6 @@ export function Logo({ className, iconOnly = false }: LogoProps) {
             </filter>
           </defs>
           
-          {/* Main X Structure */}
           <path 
             d="M20 20L80 80M80 20L20 80" 
             stroke="url(#gold-gradient)" 
@@ -38,13 +38,6 @@ export function Logo({ className, iconOnly = false }: LogoProps) {
             filter="url(#glow)"
           />
           
-          {/* Tech Pixel Accents */}
-          <rect x="15" y="15" width="6" height="6" fill="#FDE047" className="animate-pulse" />
-          <rect x="79" y="79" width="6" height="6" fill="#A16207" />
-          <rect x="79" y="15" width="6" height="6" fill="#EAB308" />
-          <rect x="15" y="79" width="6" height="6" fill="#EAB308" />
-          
-          {/* Center Point */}
           <circle cx="50" cy="50" r="4" fill="white" className="opacity-70" />
         </svg>
       </div>

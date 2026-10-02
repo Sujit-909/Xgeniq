@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -17,16 +16,28 @@ const products = [
     description: "A centralized hub for managing supplier relationships and compliance."
   },
   {
-    title: "WMS (Warehouse Management)",
+    title: "XgenIq WMS",
     tag: "Logistics",
     features: ["Real-time Inventory", "Barcode Scanning", "Automated Dispatch"],
     description: "Streamline your warehouse operations with real-time stock tracking."
   },
   {
-    title: "Plant Maintenance System",
+    title: "XgenIq Plant Maintenance",
     tag: "Industrial",
-    features: ["Asset Management", "Predictive Maintenance", "Work Orders"],
+    features: ["Asset Management", "Predictive Maintenance", "Operational Analytics"],
     description: "Maximize uptime and efficiency for your manufacturing assets."
+  },
+  {
+    title: "XgenIq Enterprise Workflow",
+    tag: "Business Process",
+    features: ["Digital Approvals", "Task Management", "Process Automation"],
+    description: "Accelerate decision-making with streamlined digital workflows."
+  },
+  {
+    title: "XgenIq AI Copilot",
+    tag: "Intelligence",
+    features: ["Enterprise Knowledge", "Business Q&A", "Intelligent Workflows"],
+    description: "Unlock the potential of GenAI with a custom business assistant."
   }
 ];
 
@@ -42,14 +53,14 @@ export function Products() {
           <div className="space-y-8">
             <div className="space-y-4">
               <Badge variant="outline" className="border-primary/30 text-primary">XgenIq Products</Badge>
-              <h2 className="text-4xl md:text-5xl font-headline font-bold">Ready-Made <span className="text-primary">Enterprise Solutions</span></h2>
+              <h2 className="text-4xl md:text-5xl font-headline font-bold">Ready-to-Deploy <span className="text-primary">Enterprise Solutions</span></h2>
               <p className="text-lg text-muted-foreground">
                 Accelerate your ROI with our pre-built, SAP-integrated add-ons designed for critical business functions.
               </p>
             </div>
 
             <div className="space-y-6">
-              {products.map((product, idx) => (
+              {products.slice(0, 3).map((product, idx) => (
                 <div key={idx} className="p-6 rounded-2xl bg-card/40 border border-white/5 hover:border-primary/20 transition-all group">
                   <div className="flex justify-between items-start mb-4">
                     <div className="space-y-1">
@@ -85,10 +96,11 @@ export function Products() {
                 data-ai-hint="enterprise dashboard"
               />
             </div>
-            <div className="mt-8 text-center">
+            <div className="mt-8 text-center flex flex-col gap-4 items-center">
               <Button size="lg" className="rounded-full px-8" asChild>
-                <Link href="#inquiry">Request a Demo</Link>
+                <Link href="#inquiry">Explore All Products</Link>
               </Button>
+              <p className="text-sm text-muted-foreground">Request a custom demo tailored to your industry.</p>
             </div>
           </div>
         </div>
