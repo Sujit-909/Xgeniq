@@ -101,14 +101,11 @@ export function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <Link href="#careers" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Careers</Link>
           <Link href="#inquiry" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Contact Us</Link>
 
           <div className="flex items-center gap-3 ml-4">
-            <div className="hidden xl:flex items-center gap-2 mr-2 border-r border-border pr-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="w-4 h-4" /></Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors"><Twitter className="w-4 h-4" /></Link>
-            </div>
-            <Button variant="default" size="sm" asChild className="rounded-full shadow-lg shadow-primary/20">
+            <Button variant="default" size="sm" asChild className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
               <Link href="#inquiry">Talk to an Expert</Link>
             </Button>
           </div>
@@ -116,7 +113,7 @@ export function Navbar() {
 
         {/* Mobile Section */}
         <div className="flex items-center gap-2 lg:hidden">
-          <Button variant="ghost" size="icon" asChild className="rounded-full">
+          <Button variant="ghost" size="icon" asChild className="rounded-full" suppressHydrationWarning>
             <Link href="#inquiry" title="Contact Us">
               <Mail className="w-5 h-5 text-primary" />
             </Link>
@@ -135,7 +132,7 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 right-0 bg-background border-b border-border p-6 animate-in slide-in-from-top duration-300 shadow-2xl max-h-[80vh] overflow-y-auto">
           <div className="flex flex-col gap-4">
-            {['Home', 'About Us', 'Training', 'Services', 'Industries', 'Contact Us'].map((name) => (
+            {['Home', 'About Us', 'Training', 'Services', 'Industries', 'Careers', 'Contact Us'].map((name) => (
               <Link 
                 key={name} 
                 href={`#${name.toLowerCase().replace(' ', '')}`}
@@ -160,15 +157,9 @@ export function Navbar() {
                 <Link href="#blog" className="text-sm" onClick={() => setIsMobileMenuOpen(false)}>Innovation</Link>
               </div>
             </div>
-            <Button className="w-full mt-4 rounded-full py-6 text-lg" asChild onClick={() => setIsMobileMenuOpen(false)}>
+            <Button className="w-full mt-4 rounded-full py-6 text-lg" asChild onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>
               <Link href="#inquiry">Talk to an Expert</Link>
             </Button>
-            <div className="flex justify-center gap-6 pt-4">
-              <Youtube className="w-5 h-5 text-muted-foreground" />
-              <Instagram className="w-5 h-5 text-muted-foreground" />
-              <Linkedin className="w-5 h-5 text-muted-foreground" />
-              <MessageCircle className="w-5 h-5 text-muted-foreground" />
-            </div>
           </div>
         </div>
       )}
