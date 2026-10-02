@@ -47,7 +47,10 @@ export function Navbar() {
           
           {/* SAP Solutions Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none">
+            <DropdownMenuTrigger 
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none"
+              suppressHydrationWarning
+            >
               SAP Solutions <ChevronDown className="w-4 h-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-background/95 border-border backdrop-blur-lg">
@@ -79,7 +82,10 @@ export function Navbar() {
 
           {/* Blog / Resources Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none">
+            <DropdownMenuTrigger 
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none"
+              suppressHydrationWarning
+            >
               Blog / Resources <ChevronDown className="w-4 h-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-background/95 border-border backdrop-blur-lg">
@@ -118,6 +124,7 @@ export function Navbar() {
           <button 
             className="p-2 text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            suppressHydrationWarning
           >
             {isMobileMenuOpen ? <X /> : <Menu />}
           </button>
