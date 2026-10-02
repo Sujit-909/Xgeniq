@@ -5,13 +5,10 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Logo } from '@/components/brand/Logo';
 
 export function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
-
-  const logo = PlaceHolderImages.find(img => img.id === 'app-logo');
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
@@ -22,25 +19,10 @@ export function Footer() {
       <div className="container px-6 mx-auto">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
-            <Link href="/" className="group inline-block">
-              {logo ? (
-                <div className="relative w-48 h-16 md:w-64 md:h-20 mb-2">
-                  <Image 
-                    src={logo.imageUrl} 
-                    alt="XgenIq Technologies Logo" 
-                    fill 
-                    className="object-contain"
-                    sizes="(max-width: 768px) 192px, 256px"
-                    data-ai-hint="gold tech logo"
-                  />
-                </div>
-              ) : (
-                <span className="text-3xl font-sans font-bold tracking-tighter text-foreground">
-                  Xgen<span className="text-primary">Iq</span>
-                </span>
-              )}
+            <Link href="/" className="group inline-block transition-transform hover:scale-105 active:scale-95">
+              <Logo />
             </Link>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed max-w-xs">
               Global IT solutions provider specializing in SAP BTP, Enterprise AI, and Cloud Infrastructure. Delivering excellence from Cuttack, Odisha.
             </p>
             <div className="flex gap-4">

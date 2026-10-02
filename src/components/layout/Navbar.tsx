@@ -6,14 +6,11 @@ import Link from 'next/link';
 import { Menu, X, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Logo } from '@/components/brand/Logo';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const logo = PlaceHolderImages.find(img => img.id === 'app-logo');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,24 +35,8 @@ export function Navbar() {
       isScrolled ? 'bg-background/80 backdrop-blur-lg border-b border-border py-2' : 'bg-transparent'
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="group flex items-center">
-          {logo ? (
-            <div className="relative w-40 h-12 md:w-56 md:h-16 group-hover:scale-105 transition-transform duration-300">
-              <Image 
-                src={logo.imageUrl} 
-                alt="XgenIq Technologies Logo" 
-                fill 
-                priority
-                className="object-contain"
-                sizes="(max-width: 768px) 160px, 224px"
-                data-ai-hint="gold tech logo"
-              />
-            </div>
-          ) : (
-            <span className="text-2xl font-sans font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform">
-              Xgen<span className="text-primary">Iq</span>
-            </span>
-          )}
+        <Link href="/" className="group transition-transform hover:scale-105 active:scale-95">
+          <Logo />
         </Link>
 
         {/* Desktop Nav */}
@@ -99,19 +80,19 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-border p-6 animate-in slide-in-from-top duration-300">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-border p-6 animate-in slide-in-from-top duration-300 shadow-2xl">
           <div className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href}
-                className="text-lg font-medium py-2 border-b border-border/50"
+                className="text-lg font-medium py-3 border-b border-border/50"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.name}
               </Link>
             ))}
-            <Button className="w-full mt-4 rounded-full" asChild onClick={() => setIsMobileMenuOpen(false)}>
+            <Button className="w-full mt-4 rounded-full py-6 text-lg" asChild onClick={() => setIsMobileMenuOpen(false)}>
               <Link href="#inquiry">Get a Quote</Link>
             </Button>
           </div>
