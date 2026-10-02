@@ -267,11 +267,12 @@ export function Industries() {
                     <button 
                       onClick={() => setSelectedIndustry(item)}
                       className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest hover:gap-3 transition-all duration-300 group/btn outline-none"
+                      suppressHydrationWarning
                     >
                       Learn More <ChevronRight className="w-4 h-4" />
                     </button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[850px] bg-background border-white/10 text-foreground">
+                  <DialogContent className="sm:max-w-[850px] bg-background border-white/10 text-foreground" suppressHydrationWarning>
                     {selectedIndustry && (
                       <div className="flex flex-col gap-0 max-h-[85vh]">
                         <DialogHeader className="pb-6 border-b border-white/5">
@@ -330,7 +331,7 @@ export function Industries() {
                         
                         <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
                           <p className="text-xs text-muted-foreground">Ready to transform your {selectedIndustry.title.toLowerCase()} operations?</p>
-                          <Button className="rounded-full shadow-lg shadow-primary/20 w-full sm:w-auto" asChild>
+                          <Button className="rounded-full shadow-lg shadow-primary/20 w-full sm:w-auto" asChild suppressHydrationWarning>
                             <a href="#inquiry">Talk to an Industry Expert <ArrowRight className="ml-2 w-4 h-4" /></a>
                           </Button>
                         </div>
