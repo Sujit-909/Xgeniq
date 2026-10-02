@@ -29,7 +29,7 @@ export function Logo({ className, iconOnly = false }: LogoProps) {
           </defs>
           
           <path 
-            d="M20 20L80 80M80 20L20 80" 
+            d="M25 25L75 75M75 25L25 75" 
             stroke="url(#gold-gradient)" 
             strokeWidth="12" 
             strokeLinecap="round" 

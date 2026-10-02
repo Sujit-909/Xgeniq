@@ -51,43 +51,43 @@
     {
       "id": "blog-sap",
       "description": "SAP BTP and Cloud integration concept",
-      "imageUrl": "https://picsum.photos/seed/sap-blog/800/600",
+      "imageUrl": "https://t3.ftcdn.net/jpg/03/63/94/88/240_F_363948837_OnJOJupnRdr15fOryrTF0zrnIFQ6nUp1.jpg",
       "imageHint": "cloud computing"
     },
     {
       "id": "blog-react",
       "description": "Modern web development with React and TypeScript",
-      "imageUrl": "https://picsum.photos/seed/react-blog/800/600",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST7L9egAYzKiPfLy8cPiyroROjRzcfCfd7nLaourCkug&s=10",
       "imageHint": "software code"
     },
     {
       "id": "blog-dotnet",
       "description": "Enterprise architecture with .NET and C#",
-      "imageUrl": "https://picsum.photos/seed/dotnet-blog/800/600",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNsnWZy9CDvLd2hzKzUmIfXXlQnGmnP4xhluGvvvT6cA&s=10",
       "imageHint": "digital infrastructure"
     },
     {
       "id": "culture-1",
       "description": "Team collaboration at XgenIq",
-      "imageUrl": "https://picsum.photos/seed/team-work/800/600",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKNq5ozeZ9kUuTWUWcxMd3MUKlBN-1J9qnQCGFDKutIQ&s=10",
       "imageHint": "team collaboration"
     },
     {
       "id": "culture-2",
       "description": "XgenIq team outing and fun",
-      "imageUrl": "https://picsum.photos/seed/fun-office/800/600",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUtLa0ZHQ43BWVCFE7Tr4X1WRxbF4YcKFixPdySJX0wQ&s=10",
       "imageHint": "office culture"
     },
     {
       "id": "emp-1",
       "description": "Employee portrait",
-      "imageUrl": "https://picsum.photos/seed/emp1/400/400",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStF5f3h0iYGJ8x3zMJ-S6o_ya6FTdNTUa6mRZX83V1Ig&s=10",
       "imageHint": "professional person"
     },
     {
       "id": "emp-2",
       "description": "Employee portrait",
-      "imageUrl": "https://picsum.photos/seed/emp2/400/400",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStF5f3h0iYGJ8x3zMJ-S6o_ya6FTdNTUa6mRZX83V1Ig&s=10",
       "imageHint": "professional person"
     }
   ]
