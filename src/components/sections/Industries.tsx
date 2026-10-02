@@ -18,37 +18,37 @@ import { cn } from '@/lib/utils';
 const industries = [
   {
     title: "Manufacturing",
-    desc: "Digital manufacturing, ERP, supply chain, analytics and automation.",
+    desc: "Smart manufacturing solutions that streamline production, supply chain, ERP operations, asset management, analytics, and automation.",
     icon: Factory,
   },
   {
     title: "Energy & Utilities",
-    desc: "Enterprise applications, field operations, asset-intensive processes and analytics.",
+    desc: "Digital solutions for asset-intensive operations, field services, enterprise applications, analytics, and efficient resource management.",
     icon: Zap,
   },
   {
     title: "Oil & Gas",
-    desc: "SAP, enterprise applications, integration, analytics and digital operations.",
+    desc: "Integrated SAP and digital solutions for upstream, midstream, and downstream operations, asset management, analytics, and process optimization.",
     icon: Droplets,
   },
   {
     title: "Pharmaceuticals & Life Sciences",
-    desc: "Business applications, compliance, analytics and digital transformation.",
+    desc: "Technology solutions supporting pharmaceutical operations, quality and compliance, supply chain, enterprise applications, and digital transformation.",
     icon: FlaskConical,
   },
   {
     title: "Retail & Consumer",
-    desc: "Commerce, supply chain, analytics and customer applications.",
+    desc: "Connected retail solutions for commerce, customer experience, supply chain, inventory, analytics, and enterprise business applications.",
     icon: ShoppingBag,
   },
   {
     title: "Logistics & Supply Chain",
-    desc: "Warehouse, logistics, supplier and enterprise applications.",
+    desc: "Digital solutions for logistics, warehouse management, transportation, procurement, supplier management, and end-to-end supply chain visibility.",
     icon: Truck,
   },
   {
     title: "Other Industries",
-    desc: "Technology solutions tailored to specific business requirements.",
+    desc: "Flexible technology and consulting solutions tailored to the unique processes, challenges, and digital transformation needs of different industries.",
     icon: LayoutGrid,
   }
 ];
