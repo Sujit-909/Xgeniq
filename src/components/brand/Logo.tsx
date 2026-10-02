@@ -10,33 +10,36 @@ interface LogoProps {
 export function Logo({ className, iconOnly = false }: LogoProps) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div className="relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-xl border border-primary/20 shadow-lg shadow-primary/5">
+      <div className="relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary/5 rounded-xl border border-primary/20 shadow-xl overflow-hidden group">
         <svg 
-          viewBox="0 0 40 40" 
+          viewBox="0 0 100 100" 
           fill="none" 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="w-6 h-6 md:w-7 md:h-7 text-primary"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-7 h-7 md:w-8 md:h-8 transition-transform duration-500 group-hover:scale-110"
         >
+          <defs>
+            <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FDE047" />
+              <stop offset="50%" stopColor="#EAB308" />
+              <stop offset="100%" stopColor="#A16207" />
+            </linearGradient>
+          </defs>
+          {/* Main X Structure */}
           <path 
-            d="M10 10L30 30M30 10L10 30" 
-            stroke="currentColor" 
-            strokeWidth="5" 
+            d="M25 25L75 75M75 25L25 80" 
+            stroke="url(#gold-gradient)" 
+            strokeWidth="12" 
             strokeLinecap="round" 
             strokeLinejoin="round"
           />
-          <circle cx="20" cy="20" r="3" fill="currentColor" />
-          <path 
-            d="M5 5L12 5M5 5L5 12" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round"
-          />
-          <path 
-            d="M35 35L28 35M35 35L35 28" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round"
-          />
+          {/* Tech Pixel Accents */}
+          <rect x="20" y="20" width="6" height="6" fill="#FDE047" className="animate-pulse" />
+          <rect x="74" y="74" width="6" height="6" fill="#A16207" />
+          <rect x="74" y="20" width="6" height="6" fill="#EAB308" />
+          <rect x="20" y="74" width="6" height="6" fill="#EAB308" />
+          
+          {/* Center Point */}
+          <circle cx="50" cy="50" r="4" fill="white" className="opacity-50" />
         </svg>
       </div>
       {!iconOnly && (
