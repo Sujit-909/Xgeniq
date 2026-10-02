@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Twitter, Github, Youtube, Instagram, MessageCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Logo } from '@/components/brand/Logo';
 
@@ -24,25 +24,34 @@ export function Footer() {
             <p className="text-muted-foreground leading-relaxed max-w-xs">
               Global IT solutions provider specializing in SAP BTP, Enterprise AI, and Cloud Infrastructure. Delivering excellence from Cuttack, Odisha.
             </p>
-            <div className="flex gap-4">
-              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all">
+            <div className="flex flex-wrap gap-3">
+              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="LinkedIn">
                 <Linkedin className="w-4 h-4" />
               </Link>
-              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all">
+              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="X (Twitter)">
                 <Twitter className="w-4 h-4" />
               </Link>
-              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all">
+              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="YouTube">
+                <Youtube className="w-4 h-4" />
+              </Link>
+              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="Instagram">
+                <Instagram className="w-4 h-4" />
+              </Link>
+              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="WhatsApp">
+                <MessageCircle className="w-4 h-4" />
+              </Link>
+              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="GitHub">
                 <Github className="w-4 h-4" />
               </Link>
             </div>
           </div>
 
           <div>
-            <h4 className="font-headline font-bold text-lg mb-6">Expertise</h4>
+            <h4 className="font-headline font-bold text-lg mb-6">Quick Links</h4>
             <ul className="space-y-4">
-              {['SAP Services', 'Software Engineering', 'Cloud & DevOps', 'Data & Analytics', 'AI & GenAI', 'Integration'].map((item) => (
+              {['Home', 'About Us', 'SAP Solutions', 'Training', 'Services', 'Industries', 'Blog / Resources', 'Contact Us'].map((item) => (
                 <li key={item}>
-                  <Link href="#services" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href={`#${item.toLowerCase().replace(' ', '')}`} className="text-muted-foreground hover:text-primary transition-colors">
                     {item}
                   </Link>
                 </li>

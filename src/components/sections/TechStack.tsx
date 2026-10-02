@@ -9,7 +9,8 @@ const ecosystem = [
   { category: "Software Engineering", tools: ["React", "Node.js", ".NET", "Flutter", ".NET MAUI", "Python", "Microservices"] },
   { category: "Cloud Infrastructure", tools: ["AWS", "Microsoft Azure", "Google Cloud"] },
   { category: "Data & Analytics", tools: ["Power BI", "Tableau", "SAC", "Datasphere", "Snowflake"] },
-  { category: "AI & GenAI", tools: ["OpenAI", "Gemini", "LangChain", "PyTorch", "TensorFlow", "RAG"] }
+  { category: "AI & GenAI", tools: ["OpenAI", "Gemini", "LangChain", "PyTorch", "TensorFlow", "RAG"] },
+  { category: "Training & Services", tools: ["Corporate Training", "Website Design", "Individual Consulting / Coaching"] }
 ];
 
 export function TechStack() {
@@ -23,11 +24,11 @@ export function TechStack() {
           <p className="text-muted-foreground max-w-2xl mx-auto">Technology is an enabler. We select the right architecture and technology based on the business requirement—not the other way around.</p>
         </div>
         
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {ecosystem.map((group, idx) => (
-            <div key={idx} className="glass-card p-8 rounded-2xl border-white/5 bg-card/10 space-y-6">
+            <div key={idx} className="glass-card p-8 rounded-2xl border-white/5 bg-card/10 space-y-6 flex flex-col">
               <h5 className="text-sm font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-2">{group.category}</h5>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 flex-1 items-start content-start">
                 {group.tools.map((tool, tIdx) => (
                   <Badge key={tIdx} variant="secondary" className="bg-background border border-border/50 text-foreground/80 py-1 px-3">
                     {tool}
