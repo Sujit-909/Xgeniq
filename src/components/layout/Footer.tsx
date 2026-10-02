@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -77,8 +76,12 @@ export function Footer() {
                 type="email" 
                 placeholder="Business Email" 
                 className="bg-secondary/50 border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none transition-all"
+                suppressHydrationWarning
               />
-              <button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 rounded-lg transition-all">
+              <button 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 rounded-lg transition-all"
+                suppressHydrationWarning
+              >
                 Subscribe
               </button>
             </div>
