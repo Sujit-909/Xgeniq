@@ -1,7 +1,6 @@
-
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
@@ -217,6 +216,9 @@ export function Careers() {
   const [openPage, setOpenPage] = useState(1);
   const [closedPage, setClosedPage] = useState(1);
   const [isMounted, setIsMounted] = useState(false);
+  
+  const quickFileInputRef = useRef<HTMLInputElement>(null);
+  const detailFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -519,9 +521,20 @@ export function Careers() {
                                             <Textarea id="cover" name="cover" placeholder="What makes you a great fit?" className="min-h-[100px] bg-secondary/50 border-white/10" suppressHydrationWarning />
                                           </div>
                                           <div className="space-y-2">
-                                            <Label htmlFor="cv" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
-                                            <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
-                                              <Input id="cv" name="cv" type="file" accept=".pdf" className="hidden" suppressHydrationWarning />
+                                            <Label className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
+                                            <div 
+                                              onClick={() => detailFileInputRef.current?.click()}
+                                              className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group"
+                                            >
+                                              <Input 
+                                                id="cv" 
+                                                name="cv" 
+                                                type="file" 
+                                                accept=".pdf" 
+                                                className="hidden" 
+                                                ref={detailFileInputRef}
+                                                suppressHydrationWarning 
+                                              />
                                               <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
                                               <p className="text-sm font-medium">Click to upload CV</p>
                                               <p className="text-xs text-muted-foreground mt-1">PDF format preferred</p>
@@ -585,9 +598,20 @@ export function Careers() {
                                       <Textarea id="cover-quick" name="cover-quick" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" suppressHydrationWarning />
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="cv-quick" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
-                                      <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
-                                        <Input id="cv-quick" name="cv-quick" type="file" accept=".pdf" className="hidden" suppressHydrationWarning />
+                                      <Label className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
+                                      <div 
+                                        onClick={() => quickFileInputRef.current?.click()}
+                                        className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group"
+                                      >
+                                        <Input 
+                                          id="cv-quick" 
+                                          name="cv-quick" 
+                                          type="file" 
+                                          accept=".pdf" 
+                                          className="hidden" 
+                                          ref={quickFileInputRef}
+                                          suppressHydrationWarning 
+                                        />
                                         <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
                                         <p className="text-sm font-medium">Click to upload CV</p>
                                       </div>
@@ -864,4 +888,3 @@ export function Careers() {
     </section>
   );
 }
-
