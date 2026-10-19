@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -16,7 +17,15 @@ import {
   Search,
   Check,
   X,
-  ImageIcon
+  ImageIcon,
+  GraduationCap,
+  Building2,
+  Briefcase,
+  Mail,
+  Upload,
+  User,
+  ExternalLink,
+  ShieldCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -48,108 +57,129 @@ import { useToast } from '@/hooks/use-toast';
 // Initial Mock Data
 const INITIAL_SERVICES = [
   { id: 1, title: "SAP Transformation", summary: "S/4HANA, BTP, Fiori, RAP, CAP, Integration, Functional Consulting.", category: "SAP" },
-  { id: 2, title: "Software Engineering", summary: "Web, mobile, APIs, microservices and enterprise applications.", category: "Engineering" },
-  { id: 3, title: "Cloud & DevOps", summary: "Cloud architecture, migration, modernization and DevOps.", category: "Cloud" },
-  { id: 4, title: "Data & Analytics", summary: "Data engineering, BI, analytics, visualization and enterprise platforms.", category: "Data" },
-  { id: 5, title: "AI & GenAI", summary: "AI applications, GenAI, AI agents, copilots, automation.", category: "AI" },
-  { id: 6, title: "Managed Services", summary: "Application support, SAP AMS, non-SAP AMS, staffing.", category: "Operations" }
+  { id: 2, title: "Software Engineering", summary: "Web, mobile, APIs, microservices and enterprise applications.", category: "Engineering" }
 ];
 
 const INITIAL_BLOGS = [
-  { 
-    id: 1, 
-    title: "Mastering SAP BTP: The Future of Enterprise Extensions", 
-    category: "SAP BTP", 
-    author: "Debananda Behera", 
-    date: "2024-02-15",
-    imageUrl: "https://t3.ftcdn.net/jpg/03/63/94/88/240_F_363948837_OnJOJupnRdr15fOryrTF0zrnIFQ6nUp1.jpg"
-  },
-  { 
-    id: 2, 
-    title: "Optimizing SAP Fiori for Mobile Workforces", 
-    category: "Fiori/UI5", 
-    author: "SAP Specialist", 
-    date: "2024-01-10",
-    imageUrl: "https://picsum.photos/seed/sap-mobile/800/450"
-  },
-  { 
-    id: 3, 
-    title: "AI Integration in Modern SaaS Platforms", 
-    category: "GenAI", 
-    author: "AI Specialist", 
-    date: "2024-03-05",
-    imageUrl: "https://picsum.photos/seed/ai-tech/800/450"
-  }
+  { id: 1, title: "Mastering SAP BTP", category: "SAP", author: "Debananda Behera", date: "2024-02-15", imageUrl: "https://picsum.photos/seed/sap/800/450" }
+];
+
+const INITIAL_TRAINING = [
+  { id: 1, title: "SAP BTP Excellence", description: "Deep dive into CAP and RAP models.", imageUrl: "https://picsum.photos/seed/training1/800/450" },
+  { id: 2, title: "Modern Web Stack", description: "Next.js 15 and Tailwind mastery.", imageUrl: "https://picsum.photos/seed/training2/800/450" }
+];
+
+const INITIAL_INDUSTRIES = [
+  { id: 1, title: "Manufacturing", summary: "Smart manufacturing and ERP operations.", imageUrl: "https://picsum.photos/seed/ind1/800/450" },
+  { id: 2, title: "Energy & Utilities", summary: "Asset-intensive digital solutions.", imageUrl: "https://picsum.photos/seed/ind2/800/450" }
+];
+
+const INITIAL_CAREERS = [
+  { id: 1, title: "Senior SAP Consultant", department: "SAP Solutions", type: "Full-time", location: "Cuttack / Remote" },
+  { id: 2, title: "AI/ML Engineer", department: "Innovation Lab", type: "Full-time", location: "Odisha" }
+];
+
+const INITIAL_INQUIRIES = [
+  { id: 1, name: "John Doe", company: "Global Tech Inc", email: "john@tech.com", service: "SAP BTP", date: "2024-03-01", status: "Pending" },
+  { id: 2, name: "Sarah Smith", company: "Energy Corp", email: "sarah@energy.com", service: "Cloud & DevOps", date: "2024-03-02", status: "Contacted" }
 ];
 
 export default function AdminDashboard() {
   const { toast } = useToast();
   const [services, setServices] = useState(INITIAL_SERVICES);
   const [blogs, setBlogs] = useState(INITIAL_BLOGS);
+  const [training, setTraining] = useState(INITIAL_TRAINING);
+  const [industries, setIndustries] = useState(INITIAL_INDUSTRIES);
+  const [careers, setCareers] = useState(INITIAL_CAREERS);
+  const [inquiries, setInquiries] = useState(INITIAL_INQUIRIES);
   
-  // State for forms
-  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
-  const [editingService, setEditingService] = useState<any>(null);
-  
-  const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
-  const [editingBlog, setEditingBlog] = useState<any>(null);
+  // States for modals
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("services");
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Service CRUD
-  const handleSaveService = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get('title') as string;
-    const summary = formData.get('summary') as string;
-    const category = formData.get('category') as string;
-
-    if (editingService) {
-      setServices(prev => prev.map(s => s.id === editingService.id ? { ...s, title, summary, category } : s));
-      toast({ title: "Service Updated", description: `${title} has been successfully updated.` });
-    } else {
-      const newService = { id: Date.now(), title, summary, category };
-      setServices(prev => [...prev, newService]);
-      toast({ title: "Service Added", description: `${title} has been added to the catalog.` });
-    }
-    setIsServiceModalOpen(false);
-    setEditingService(null);
-  };
-
-  const handleDeleteService = (id: number) => {
-    setServices(prev => prev.filter(s => s.id !== id));
-    toast({ variant: "destructive", title: "Service Deleted", description: "The service has been removed from the platform." });
-  };
-
-  // Blog CRUD
-  const handleSaveBlog = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get('title') as string;
-    const author = formData.get('author') as string;
-    const category = formData.get('category') as string;
-    const imageUrl = formData.get('imageUrl') as string;
-
-    if (editingBlog) {
-      setBlogs(prev => prev.map(b => b.id === editingBlog.id ? { ...b, title, author, category, imageUrl } : b));
-      toast({ title: "Blog Updated", description: "The article and its visuals have been updated." });
-    } else {
-      const newBlog = { 
-        id: Date.now(), 
-        title, 
-        author, 
-        category, 
-        imageUrl: imageUrl || "https://picsum.photos/seed/default/800/450",
-        date: new Date().toISOString().split('T')[0] 
+  // Simulated Image Upload from Local Device
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
       };
-      setBlogs(prev => [...prev, newBlog]);
-      toast({ title: "Blog Published", description: "New content with visuals is now live." });
+      reader.readAsDataURL(file);
     }
-    setIsBlogModalOpen(false);
-    setEditingBlog(null);
   };
 
-  const handleDeleteBlog = (id: number) => {
-    setBlogs(prev => prev.filter(b => b.id !== id));
-    toast({ variant: "destructive", title: "Content Removed", description: "The blog post has been deleted." });
+  const resetForm = () => {
+    setEditingItem(null);
+    setPreviewImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data: any = Object.fromEntries(formData.entries());
+    
+    if (previewImage) data.imageUrl = previewImage;
+
+    const saveActions: any = {
+      services: () => {
+        if (editingItem) {
+          setServices(prev => prev.map(s => s.id === editingItem.id ? { ...s, ...data } : s));
+        } else {
+          setServices(prev => [...prev, { id: Date.now(), ...data }]);
+        }
+      },
+      blogs: () => {
+        if (editingItem) {
+          setBlogs(prev => prev.map(b => b.id === editingItem.id ? { ...b, ...data } : b));
+        } else {
+          setBlogs(prev => [...prev, { id: Date.now(), ...data, date: new Date().toISOString().split('T')[0] }]);
+        }
+      },
+      training: () => {
+        if (editingItem) {
+          setTraining(prev => prev.map(t => t.id === editingItem.id ? { ...t, ...data } : t));
+        } else {
+          setTraining(prev => [...prev, { id: Date.now(), ...data }]);
+        }
+      },
+      industries: () => {
+        if (editingItem) {
+          setIndustries(prev => prev.map(i => i.id === editingItem.id ? { ...i, ...data } : i));
+        } else {
+          setIndustries(prev => [...prev, { id: Date.now(), ...data }]);
+        }
+      },
+      careers: () => {
+        if (editingItem) {
+          setCareers(prev => prev.map(c => c.id === editingItem.id ? { ...c, ...data } : c));
+        } else {
+          setCareers(prev => [...prev, { id: Date.now(), ...data }]);
+        }
+      }
+    };
+
+    saveActions[activeTab]();
+    toast({ title: "Success", description: "Record updated successfully." });
+    setIsModalOpen(false);
+    resetForm();
+  };
+
+  const handleDelete = (id: number, type: string) => {
+    const setters: any = {
+      services: setServices,
+      blogs: setBlogs,
+      training: setTraining,
+      industries: setIndustries,
+      careers: setCareers,
+      inquiries: setInquiries
+    };
+    setters[type]( (prev: any[]) => prev.filter(item => item.id !== id));
+    toast({ variant: "destructive", title: "Deleted", description: "Item removed from system." });
   };
 
   return (
@@ -163,16 +193,13 @@ export default function AdminDashboard() {
             </Link>
             <div className="h-6 w-px bg-white/10 hidden md:block" />
             <span className="hidden md:flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-primary">
-              <Settings className="w-4 h-4" /> Admin Control Hub
+              <ShieldCheck className="w-4 h-4" /> Admin Command Hub
             </span>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" asChild className="rounded-full" suppressHydrationWarning>
-              <Link href="/"><ChevronLeft className="w-4 h-4 mr-2" /> View Site</Link>
+              <Link href="/"><ChevronLeft className="w-4 h-4 mr-2" /> Live Site</Link>
             </Button>
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
-              AD
-            </div>
           </div>
         </div>
       </nav>
@@ -180,222 +207,202 @@ export default function AdminDashboard() {
       <main className="container mx-auto px-6 py-12 max-w-7xl">
         <div className="mb-12 space-y-2">
           <h1 className="text-4xl font-headline font-bold">Dashboard <span className="text-primary">Overview</span></h1>
-          <p className="text-muted-foreground">Manage your enterprise platform content, services, and visual resources.</p>
+          <p className="text-muted-foreground">Manage your global platform assets and enterprise content strategy.</p>
         </div>
 
-        <Tabs defaultValue="services" className="space-y-8">
-          <TabsList className="bg-secondary/50 border border-white/5 p-1 rounded-xl w-full max-w-md">
-            <TabsTrigger value="services" className="flex-1 gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all" suppressHydrationWarning>
-              <Cpu className="w-4 h-4" /> Services
-            </TabsTrigger>
-            <TabsTrigger value="blogs" className="flex-1 gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all" suppressHydrationWarning>
-              <FileText className="w-4 h-4" /> Blogs & Resources
-            </TabsTrigger>
+        <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); resetForm(); }} className="space-y-8">
+          <TabsList className="bg-secondary/50 border border-white/5 p-1 rounded-xl w-full flex flex-wrap justify-start h-auto gap-1">
+            {[
+              { id: "services", icon: Cpu, label: "Services" },
+              { id: "training", icon: GraduationCap, label: "Training" },
+              { id: "industries", icon: Building2, label: "Industries" },
+              { id: "careers", icon: Briefcase, label: "Careers" },
+              { id: "blogs", icon: FileText, label: "Insights" },
+              { id: "inquiries", icon: Mail, label: "Inquiries" }
+            ].map(tab => (
+              <TabsTrigger 
+                key={tab.id} 
+                value={tab.id} 
+                className="flex-1 min-w-[120px] gap-2 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all"
+                suppressHydrationWarning
+              >
+                <tab.icon className="w-4 h-4" /> {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
-          {/* Services Content */}
-          <TabsContent value="services" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {/* Section Render Logic */}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className="glass-card border-white/5">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 border-b border-white/5">
                 <div>
-                  <CardTitle className="text-2xl font-bold">Service Offerings</CardTitle>
-                  <CardDescription>Manage the service cards shown on the homepage.</CardDescription>
+                  <CardTitle className="text-2xl font-bold capitalize">{activeTab} Management</CardTitle>
+                  <CardDescription>Manage the records displayed in the {activeTab} section.</CardDescription>
                 </div>
-                <Dialog open={isServiceModalOpen} onOpenChange={(open) => { setIsServiceModalOpen(open); if(!open) setEditingService(null); }}>
-                  <DialogTrigger asChild>
-                    <Button className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
-                      <Plus className="w-4 h-4 mr-2" /> Add Service
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-background border-white/10 text-foreground">
-                    <DialogHeader>
-                      <DialogTitle>{editingService ? "Edit Service" : "Add New Service"}</DialogTitle>
-                      <DialogDescription>Define the service title, category, and summary for the public catalog.</DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleSaveService} className="space-y-6 py-4">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="title">Service Title</Label>
-                          <Input id="title" name="title" defaultValue={editingService?.title} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                {activeTab !== 'inquiries' && (
+                  <Dialog open={isModalOpen} onOpenChange={(open) => { setIsModalOpen(open); if(!open) resetForm(); }}>
+                    <DialogTrigger asChild>
+                      <Button className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
+                        <Plus className="w-4 h-4 mr-2" /> Add Record
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-xl">
+                      <DialogHeader>
+                        <DialogTitle>{editingItem ? "Edit Record" : "Add New Record"}</DialogTitle>
+                        <DialogDescription>Fill in the details for the {activeTab} section.</DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleSave} className="space-y-6 py-4">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="title">Title / Name</Label>
+                            <Input id="title" name="title" defaultValue={editingItem?.title || editingItem?.name} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                          </div>
+                          
+                          {activeTab === 'blogs' && (
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="category">Category</Label>
+                                <Input id="category" name="category" defaultValue={editingItem?.category} required className="bg-secondary/50 border-white/5" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="author">Author</Label>
+                                <Input id="author" name="author" defaultValue={editingItem?.author} required className="bg-secondary/50 border-white/5" />
+                              </div>
+                            </div>
+                          )}
+
+                          {activeTab === 'careers' && (
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="department">Department</Label>
+                                <Input id="department" name="department" defaultValue={editingItem?.department} required className="bg-secondary/50 border-white/5" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="location">Location</Label>
+                                <Input id="location" name="location" defaultValue={editingItem?.location} required className="bg-secondary/50 border-white/5" />
+                              </div>
+                            </div>
+                          )}
+
+                          {(activeTab === 'services' || activeTab === 'industries' || activeTab === 'training') && (
+                            <div className="space-y-2">
+                              <Label htmlFor="summary">Brief Summary / Description</Label>
+                              <Textarea id="summary" name={activeTab === 'training' ? 'description' : 'summary'} defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[100px]" />
+                            </div>
+                          )}
+
+                          {['blogs', 'training', 'industries'].includes(activeTab) && (
+                            <div className="space-y-2">
+                              <Label className="flex items-center gap-2">
+                                <Upload className="w-4 h-4 text-primary" /> Feature Image (Local Device)
+                              </Label>
+                              <div className="flex gap-4 items-center">
+                                <div className="relative w-24 h-24 rounded-lg border border-white/10 bg-white/5 overflow-hidden flex items-center justify-center">
+                                  {previewImage || editingItem?.imageUrl ? (
+                                    <Image src={previewImage || editingItem.imageUrl} alt="Preview" fill className="object-cover" />
+                                  ) : (
+                                    <ImageIcon className="w-8 h-8 text-muted-foreground opacity-20" />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <Input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    ref={fileInputRef} 
+                                    onChange={handleImageChange}
+                                    className="bg-secondary/50 border-white/5 file:bg-primary file:text-primary-foreground file:border-none file:rounded file:px-2 file:py-1 file:text-xs file:mr-2"
+                                  />
+                                  <p className="text-[10px] text-muted-foreground mt-2">Recommended: 800x450px or 16:9 ratio.</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="category">Category (e.g. SAP, AI, Cloud)</Label>
-                          <Input id="category" name="category" defaultValue={editingService?.category} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="summary">Brief Summary</Label>
-                          <Textarea id="summary" name="summary" defaultValue={editingService?.summary} required className="bg-secondary/50 border-white/5 min-h-[100px]" suppressHydrationWarning />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit" className="w-full" suppressHydrationWarning>
-                          {editingService ? "Save Changes" : "Create Service"}
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                        <DialogFooter>
+                          <Button type="submit" className="w-full" suppressHydrationWarning>
+                            {editingItem ? "Update Changes" : "Create Record"}
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </CardHeader>
               <CardContent className="pt-6 px-0">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-white/5 hover:bg-transparent">
-                      <TableHead className="pl-6">Service Name</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead className="hidden md:table-cell">Summary</TableHead>
+                    <TableRow className="border-white/5 hover:bg-transparent text-xs uppercase tracking-widest text-muted-foreground">
+                      {['blogs', 'training', 'industries'].includes(activeTab) && <TableHead className="pl-6 w-24">Visual</TableHead>}
+                      <TableHead className={!['blogs', 'training', 'industries'].includes(activeTab) ? "pl-6" : ""}>Title</TableHead>
+                      {activeTab === 'services' && <TableHead>Category</TableHead>}
+                      {activeTab === 'careers' && <TableHead>Dept / Location</TableHead>}
+                      {activeTab === 'inquiries' && <TableHead>Company / Service</TableHead>}
+                      {activeTab === 'inquiries' && <TableHead>Status</TableHead>}
                       <TableHead className="text-right pr-6">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {services.map((service) => (
-                      <TableRow key={service.id} className="border-white/5 group transition-colors hover:bg-white/[0.02]">
-                        <TableCell className="font-bold pl-6">{service.title}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
-                            {service.category}
-                          </Badge>
+                    {(activeTab === 'services' ? services : 
+                      activeTab === 'blogs' ? blogs : 
+                      activeTab === 'training' ? training : 
+                      activeTab === 'industries' ? industries : 
+                      activeTab === 'careers' ? careers : inquiries).map((item: any) => (
+                      <TableRow key={item.id} className="border-white/5 group transition-colors hover:bg-white/[0.02]">
+                        {['blogs', 'training', 'industries'].includes(activeTab) && (
+                          <TableCell className="pl-6">
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-white/5">
+                              <Image 
+                                src={item.imageUrl || "https://placehold.co/100x100/121212/EAB308?text=X"} 
+                                alt={item.title} 
+                                fill 
+                                className="object-cover"
+                              />
+                            </div>
+                          </TableCell>
+                        )}
+                        <TableCell className={cn("font-medium max-w-xs truncate", !['blogs', 'training', 'industries'].includes(activeTab) && "pl-6")}>
+                          {item.title || item.name}
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm max-w-xs truncate hidden md:table-cell">
-                          {service.summary}
-                        </TableCell>
-                        <TableCell className="text-right pr-6">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 hover:text-primary hover:bg-primary/10"
-                              onClick={() => { setEditingService(service); setIsServiceModalOpen(true); }}
-                              suppressHydrationWarning
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => handleDeleteService(service.id)}
-                              suppressHydrationWarning
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Blogs Content */}
-          <TabsContent value="blogs" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card className="glass-card border-white/5">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 border-b border-white/5">
-                <div>
-                  <CardTitle className="text-2xl font-bold">Resources & Blog</CardTitle>
-                  <CardDescription>Manage industry insights, technical resources, and featured visuals.</CardDescription>
-                </div>
-                <Dialog open={isBlogModalOpen} onOpenChange={(open) => { setIsBlogModalOpen(open); if(!open) setEditingBlog(null); }}>
-                  <DialogTrigger asChild>
-                    <Button className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
-                      <Plus className="w-4 h-4 mr-2" /> New Content
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-xl">
-                    <DialogHeader>
-                      <DialogTitle>{editingBlog ? "Edit Content" : "Publish New Article"}</DialogTitle>
-                      <DialogDescription>Fill in the article details and provide a high-quality image URL.</DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleSaveBlog} className="space-y-6 py-4">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="btitle">Article Title</Label>
-                          <Input id="btitle" name="title" defaultValue={editingBlog?.title} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                        </div>
                         
-                        <div className="space-y-2">
-                          <Label htmlFor="bimg" className="flex items-center gap-2">
-                            <ImageIcon className="w-4 h-4 text-primary" /> Feature Image URL
-                          </Label>
-                          <Input id="bimg" name="imageUrl" defaultValue={editingBlog?.imageUrl} placeholder="https://picsum.photos/seed/..." className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                          <p className="text-[10px] text-muted-foreground italic">Tip: Use Unsplash or Picsum URLs for the demo.</p>
-                        </div>
+                        {activeTab === 'services' && <TableCell><Badge variant="secondary">{item.category}</Badge></TableCell>}
+                        {activeTab === 'careers' && <TableCell className="text-xs">{item.department} • {item.location}</TableCell>}
+                        {activeTab === 'inquiries' && <TableCell className="text-xs font-mono">{item.company} <br/> <span className="text-primary">{item.service}</span></TableCell>}
+                        {activeTab === 'inquiries' && (
+                          <TableCell>
+                            <Badge className={item.status === 'Pending' ? 'bg-amber-500/10 text-amber-500' : 'bg-green-500/10 text-green-500'}>
+                              {item.status}
+                            </Badge>
+                          </TableCell>
+                        )}
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="bcat">Category</Label>
-                            <Input id="bcat" name="category" defaultValue={editingBlog?.category} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="bauth">Author</Label>
-                            <Input id="bauth" name="author" defaultValue={editingBlog?.author} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                          </div>
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit" className="w-full" suppressHydrationWarning>
-                          {editingBlog ? "Update Resource" : "Publish Content"}
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </CardHeader>
-              <CardContent className="pt-6 px-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-white/5 hover:bg-transparent">
-                      <TableHead className="pl-6 w-24">Visual</TableHead>
-                      <TableHead>Article Title</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead className="hidden sm:table-cell">Author</TableHead>
-                      <TableHead className="hidden lg:table-cell">Date</TableHead>
-                      <TableHead className="text-right pr-6">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {blogs.map((blog) => (
-                      <TableRow key={blog.id} className="border-white/5 group transition-colors hover:bg-white/[0.02]">
-                        <TableCell className="pl-6">
-                          <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-white/5">
-                            <Image 
-                              src={blog.imageUrl} 
-                              alt={blog.title} 
-                              fill 
-                              className="object-cover"
-                              unoptimized={blog.imageUrl.includes('placeholder.co')}
-                            />
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium max-w-xs truncate">{blog.title}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="bg-white/5 text-foreground/70">
-                            {blog.category}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">{blog.author}</TableCell>
-                        <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">{blog.date}</TableCell>
                         <TableCell className="text-right pr-6">
                           <div className="flex items-center justify-end gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 hover:text-primary hover:bg-primary/10"
-                              onClick={() => { setEditingBlog(blog); setIsBlogModalOpen(true); }}
-                              suppressHydrationWarning
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => handleDeleteBlog(blog.id)}
-                              suppressHydrationWarning
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {activeTab !== 'inquiries' ? (
+                              <>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 hover:text-primary hover:bg-primary/10"
+                                  onClick={() => { setEditingItem(item); setPreviewImage(item.imageUrl || null); setIsModalOpen(true); }}
+                                  suppressHydrationWarning
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 hover:text-destructive hover:bg-destructive/10"
+                                  onClick={() => handleDelete(item.id, activeTab)}
+                                  suppressHydrationWarning
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            ) : (
+                              <Button variant="ghost" size="sm" className="text-xs hover:text-primary" suppressHydrationWarning>
+                                <ExternalLink className="w-3 h-3 mr-1" /> Details
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -404,7 +411,7 @@ export default function AdminDashboard() {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
         </Tabs>
       </main>
 
