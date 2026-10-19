@@ -37,7 +37,9 @@ import {
   Linkedin,
   Download,
   FileSpreadsheet,
-  LogOut
+  LogOut,
+  Star,
+  Quote
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -68,6 +70,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AdminDashboard() {
   const { toast } = useToast();
@@ -84,6 +87,7 @@ export default function AdminDashboard() {
   const [careers, setCareers] = useState<any[]>([]);
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
   
   // Modal & UI States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -113,6 +117,7 @@ export default function AdminDashboard() {
       setCareers(JSON.parse(localStorage.getItem('xgeniq_careers') || '[]'));
       setInquiries(JSON.parse(localStorage.getItem('xgeniq_inquiries') || '[]'));
       setApplications(JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]'));
+      setTestimonials(JSON.parse(localStorage.getItem('xgeniq_testimonials') || '[]'));
     };
     loadData();
     window.addEventListener('storage', loadData);
@@ -203,6 +208,16 @@ export default function AdminDashboard() {
         }
         setCareers(newList);
         syncToLocalStorage('xgeniq_careers', newList);
+      },
+      testimonials: () => {
+        let newList;
+        if (editingItem) {
+          newList = testimonials.map(t => t.id === editingItem.id ? { ...t, ...data } : t);
+        } else {
+          newList = [...testimonials, { id: Date.now(), ...data }];
+        }
+        setTestimonials(newList);
+        syncToLocalStorage('xgeniq_testimonials', newList);
       }
     };
 
@@ -220,7 +235,8 @@ export default function AdminDashboard() {
       industries: 'xgeniq_industries',
       careers: 'xgeniq_careers',
       inquiries: 'xgeniq_inquiries',
-      applications: 'xgeniq_career_apps'
+      applications: 'xgeniq_career_apps',
+      testimonials: 'xgeniq_testimonials'
     };
     
     const stateSetters: any = {
@@ -230,7 +246,8 @@ export default function AdminDashboard() {
       industries: setIndustries,
       careers: setCareers,
       inquiries: setInquiries,
-      applications: setApplications
+      applications: setApplications,
+      testimonials: setTestimonials
     };
 
     const currentList = JSON.parse(localStorage.getItem(tableKeys[type]) || '[]');
@@ -312,7 +329,8 @@ export default function AdminDashboard() {
               { id: "careers", icon: Briefcase, label: "Job Postings" },
               { id: "applications", icon: FileBadge, label: "Job Apps" },
               { id: "blogs", icon: FileText, label: "Insights" },
-              { id: "inquiries", icon: Mail, label: "Inquiries" }
+              { id: "inquiries", icon: Mail, label: "Inquiries" },
+              { id: "testimonials", icon: Star, label: "Partners Say" }
             ].map(tab => (
               <TabsTrigger 
                 key={tab.id} 
@@ -328,7 +346,7 @@ export default function AdminDashboard() {
           <Card className="glass-card border-white/5">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 border-b border-white/5">
               <div>
-                <CardTitle className="text-2xl font-bold capitalize">{activeTab} Management</CardTitle>
+                <CardTitle className="text-2xl font-bold capitalize">{activeTab === 'testimonials' ? 'Partner Testimonials' : activeTab} Management</CardTitle>
                 <CardDescription>Simulated records for the {activeTab} collection.</CardDescription>
               </div>
               <div className="flex items-center gap-3">
@@ -352,10 +370,38 @@ export default function AdminDashboard() {
                       <form onSubmit={handleSave} className="space-y-6 py-4">
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label htmlFor="title">Title / Name</Label>
-                            <Input id="title" name="title" defaultValue={editingItem?.title || editingItem?.name} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                            <Label htmlFor="name">{activeTab === 'testimonials' ? 'Client Name' : 'Title / Name'}</Label>
+                            <Input id="name" name="name" defaultValue={editingItem?.name || editingItem?.title} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
                           </div>
                           
+                          {activeTab === 'testimonials' && (
+                            <>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="company">Company</Label>
+                                  <Input id="company" name="company" defaultValue={editingItem?.company} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="rating">Rating (1-5)</Label>
+                                  <Select name="rating" defaultValue={editingItem?.rating?.toString() || "5"}>
+                                    <SelectTrigger className="bg-secondary/50 border-white/5">
+                                      <SelectValue placeholder="Select rating" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {[5, 4, 3, 2, 1].map(r => (
+                                        <SelectItem key={r} value={r.toString()}>{r} Stars</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="text">Testimonial Words</Label>
+                                <Textarea id="text" name="text" defaultValue={editingItem?.text} required className="bg-secondary/50 border-white/5 min-h-[100px]" suppressHydrationWarning />
+                              </div>
+                            </>
+                          )}
+
                           {activeTab === 'blogs' && (
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
@@ -389,7 +435,7 @@ export default function AdminDashboard() {
                             </div>
                           )}
 
-                          {['blogs', 'training', 'industries'].includes(activeTab) && (
+                          {['blogs', 'training', 'industries', 'testimonials'].includes(activeTab) && (
                             <div className="space-y-2">
                               <Label className="flex items-center gap-2">
                                 <Upload className="w-4 h-4 text-primary" /> Feature Image (Local)
@@ -429,10 +475,11 @@ export default function AdminDashboard() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-white/5 hover:bg-transparent text-xs uppercase tracking-widest text-muted-foreground">
-                    {['blogs', 'training', 'industries'].includes(activeTab) && <TableHead className="pl-6 w-24">Visual</TableHead>}
-                    <TableHead className={cn(!['blogs', 'training', 'industries'].includes(activeTab) ? "pl-6" : "")}>Title / Candidate</TableHead>
+                    {['blogs', 'training', 'industries', 'testimonials'].includes(activeTab) && <TableHead className="pl-6 w-24">Visual</TableHead>}
+                    <TableHead className={cn(!['blogs', 'training', 'industries', 'testimonials'].includes(activeTab) ? "pl-6" : "")}>Title / Candidate</TableHead>
                     {activeTab === 'services' && <TableHead>Category</TableHead>}
                     {activeTab === 'careers' && <TableHead>Dept / Location</TableHead>}
+                    {activeTab === 'testimonials' && <TableHead>Company & Rating</TableHead>}
                     {activeTab === 'applications' && <TableHead>Applied For</TableHead>}
                     {activeTab === 'inquiries' && <TableHead>Company / Service</TableHead>}
                     {['inquiries', 'applications'].includes(activeTab) && <TableHead>Status</TableHead>}
@@ -445,9 +492,10 @@ export default function AdminDashboard() {
                     activeTab === 'training' ? training : 
                     activeTab === 'industries' ? industries : 
                     activeTab === 'careers' ? careers : 
-                    activeTab === 'applications' ? applications : inquiries).map((item: any) => (
+                    activeTab === 'applications' ? applications : 
+                    activeTab === 'testimonials' ? testimonials : inquiries).map((item: any) => (
                     <TableRow key={item.id} className="border-white/5 hover:bg-white/[0.02]">
-                      {['blogs', 'training', 'industries'].includes(activeTab) && (
+                      {['blogs', 'training', 'industries', 'testimonials'].includes(activeTab) && (
                         <TableCell className="pl-6">
                           <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-white/5">
                             <Image 
@@ -459,12 +507,24 @@ export default function AdminDashboard() {
                           </div>
                         </TableCell>
                       )}
-                      <TableCell className={cn("font-medium max-w-xs truncate", !['blogs', 'training', 'industries'].includes(activeTab) && "pl-6")}>
+                      <TableCell className={cn("font-medium max-w-xs truncate", !['blogs', 'training', 'industries', 'testimonials'].includes(activeTab) && "pl-6")}>
                         {item.title || item.name}
                       </TableCell>
                       
                       {activeTab === 'services' && <TableCell><Badge variant="secondary">{item.category}</Badge></TableCell>}
                       {activeTab === 'careers' && <TableCell className="text-xs">{item.department} • {item.location}</TableCell>}
+                      {activeTab === 'testimonials' && (
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs font-bold text-primary">{item.company}</span>
+                            <div className="flex gap-0.5">
+                              {[...Array(Number(item.rating || 5))].map((_, i) => (
+                                <Star key={i} className="w-2.5 h-2.5 fill-primary text-primary" />
+                              ))}
+                            </div>
+                          </div>
+                        </TableCell>
+                      )}
                       {activeTab === 'applications' && <TableCell className="text-xs text-primary">{item.jobTitle}</TableCell>}
                       {activeTab === 'inquiries' && <TableCell className="text-xs font-mono">{item.company} <br/> <span className="text-primary">{item.service}</span></TableCell>}
                       
@@ -478,7 +538,7 @@ export default function AdminDashboard() {
 
                       <TableCell className="text-right pr-6">
                         <div className="flex items-center justify-end gap-2">
-                          {['services', 'blogs', 'training', 'industries', 'careers'].includes(activeTab) ? (
+                          {['services', 'blogs', 'training', 'industries', 'careers', 'testimonials'].includes(activeTab) ? (
                             <>
                               <Button 
                                 variant="ghost" 
