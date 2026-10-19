@@ -72,6 +72,26 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Default Data for Initialization
+const DEFAULT_TESTIMONIALS = [
+  {
+    id: 1,
+    name: "Strategic Lead",
+    company: "Bid Master",
+    rating: "5",
+    text: "The reverse auction system developed by XgenIq has completely transformed our procurement process. The transparency and efficiency gains were immediate.",
+    imageUrl: null
+  },
+  {
+    id: 2,
+    name: "Operations Director",
+    company: "Tiwari Propmart",
+    rating: "5",
+    text: "XgenIq delivered a custom software solution that perfectly aligned with our real estate operations. Their attention to detail is truly commendable.",
+    imageUrl: null
+  }
+];
+
 export default function AdminDashboard() {
   const { toast } = useToast();
   const router = useRouter();
@@ -110,18 +130,38 @@ export default function AdminDashboard() {
     setIsAuthenticated(true);
 
     const loadData = () => {
-      setServices(JSON.parse(localStorage.getItem('xgeniq_services') || '[]'));
-      setBlogs(JSON.parse(localStorage.getItem('xgeniq_blogs') || '[]'));
-      setTraining(JSON.parse(localStorage.getItem('xgeniq_training') || '[]'));
-      setIndustries(JSON.parse(localStorage.getItem('xgeniq_industries') || '[]'));
-      setCareers(JSON.parse(localStorage.getItem('xgeniq_careers') || '[]'));
-      setInquiries(JSON.parse(localStorage.getItem('xgeniq_inquiries') || '[]'));
-      setApplications(JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]'));
-      setTestimonials(JSON.parse(localStorage.getItem('xgeniq_testimonials') || '[]'));
+      // Helper to get or init
+      const getOrInit = (key: string, defaultData: any) => {
+        const stored = localStorage.getItem(key);
+        if (!stored) {
+          localStorage.setItem(key, JSON.stringify(defaultData));
+          return defaultData;
+        }
+        return JSON.parse(stored);
+      };
+
+      setServices(getOrInit('xgeniq_services', []));
+      setBlogs(getOrInit('xgeniq_blogs', []));
+      setTraining(getOrInit('xgeniq_training', []));
+      setIndustries(getOrInit('xgeniq_industries', []));
+      setCareers(getOrInit('xgeniq_careers', []));
+      setInquiries(getOrInit('xgeniq_inquiries', []));
+      setApplications(getOrInit('xgeniq_career_apps', []));
+      
+      // Load Testimonials with Default Fallback if completely empty
+      const tData = getOrInit('xgeniq_testimonials', DEFAULT_TESTIMONIALS);
+      setTestimonials(tData);
     };
+
     loadData();
-    window.addEventListener('storage', loadData);
-    return () => window.removeEventListener('storage', loadData);
+    
+    // Add event listener for cross-tab updates (like when someone submits a form on the home page)
+    const handleStorageChange = (e: StorageEvent) => {
+      loadData();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [router]);
 
   const handleLogout = () => {
@@ -222,7 +262,7 @@ export default function AdminDashboard() {
     };
 
     saveActions[activeTab]();
-    toast({ title: "Success", description: "Demo Database updated." });
+    toast({ title: "Success", description: "Database updated." });
     setIsModalOpen(false);
     resetForm();
   };
@@ -256,7 +296,7 @@ export default function AdminDashboard() {
     stateSetters[type](newList);
     syncToLocalStorage(tableKeys[type], newList);
     
-    toast({ variant: "destructive", title: "Deleted", description: "Record removed from demo database." });
+    toast({ variant: "destructive", title: "Deleted", description: "Record removed." });
   };
 
   const exportApplicationsToCSV = () => {
@@ -317,7 +357,7 @@ export default function AdminDashboard() {
       <main className="container mx-auto px-6 py-12 max-w-7xl">
         <div className="mb-12 space-y-2">
           <h1 className="text-4xl font-headline font-bold">Dashboard <span className="text-primary">Overview</span></h1>
-          <p className="text-muted-foreground">Manage your simulated enterprise database in real-time.</p>
+          <p className="text-muted-foreground">Manage your enterprise data in real-time.</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); resetForm(); }} className="space-y-8">
@@ -347,7 +387,7 @@ export default function AdminDashboard() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 border-b border-white/5">
               <div>
                 <CardTitle className="text-2xl font-bold capitalize">{activeTab === 'testimonials' ? 'Partner Testimonials' : activeTab} Management</CardTitle>
-                <CardDescription>Simulated records for the {activeTab} collection.</CardDescription>
+                <CardDescription>Manage your {activeTab} collection.</CardDescription>
               </div>
               <div className="flex items-center gap-3">
                 {activeTab === 'applications' && (
@@ -365,7 +405,7 @@ export default function AdminDashboard() {
                     <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-xl" suppressHydrationWarning>
                       <DialogHeader>
                         <DialogTitle>{editingItem ? "Edit Record" : "Add New Record"}</DialogTitle>
-                        <DialogDescription>Syncing data to LocalStorage collection.</DialogDescription>
+                        <DialogDescription>Content will be saved to your local session database.</DialogDescription>
                       </DialogHeader>
                       <form onSubmit={handleSave} className="space-y-6 py-4">
                         <div className="space-y-4">
@@ -463,7 +503,7 @@ export default function AdminDashboard() {
                           )}
                         </div>
                         <DialogFooter>
-                          <Button type="submit" className="w-full" suppressHydrationWarning>Save to DB</Button>
+                          <Button type="submit" className="w-full" suppressHydrationWarning>Save Changes</Button>
                         </DialogFooter>
                       </form>
                     </DialogContent>

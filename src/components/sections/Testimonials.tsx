@@ -35,20 +35,30 @@ const defaultTestimonials = [
 
 export function Testimonials() {
   const [displayTestimonials, setDisplayTestimonials] = useState<any[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const loadTestimonials = () => {
-      const stored = JSON.parse(localStorage.getItem('xgeniq_testimonials') || '[]');
-      if (stored.length > 0) {
-        setDisplayTestimonials(stored);
-      } else {
-        setDisplayTestimonials(defaultTestimonials);
+      const stored = localStorage.getItem('xgeniq_testimonials');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.length > 0) {
+          setDisplayTestimonials(parsed);
+          return;
+        }
       }
+      setDisplayTestimonials(defaultTestimonials);
     };
+    
     loadTestimonials();
+    
+    // Listen for storage changes from the admin tab
     window.addEventListener('storage', loadTestimonials);
     return () => window.removeEventListener('storage', loadTestimonials);
   }, []);
+
+  if (!isClient) return null;
 
   return (
     <section id="testimonials" className="py-24 bg-background overflow-hidden relative">
