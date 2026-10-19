@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Linkedin, Twitter, Github, Youtube, Instagram, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Twitter, Github, Youtube, Instagram, MessageCircle, Lock } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Logo } from '@/components/brand/Logo';
 
 export function Footer() {
-  const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
@@ -39,9 +39,6 @@ export function Footer() {
               </Link>
               <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="WhatsApp">
                 <MessageCircle className="w-4 h-4" />
-              </Link>
-              <Link href="#" className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-all group" title="GitHub">
-                <Github className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -101,12 +98,14 @@ export function Footer() {
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-sm text-muted-foreground">
-            © {currentYear || '...'} XgenIq Technologies Pvt. Ltd. All Rights Reserved.
+            © {currentYear} XgenIq Technologies Pvt. Ltd. All Rights Reserved.
           </p>
           <div className="flex gap-8 text-sm text-muted-foreground">
+            <Link href="/admin" className="flex items-center gap-1.5 hover:text-primary transition-colors">
+              <Lock className="w-3 h-3" /> Admin Portal
+            </Link>
             <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
             <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
-            <Link href="#careers" className="hover:text-primary transition-colors">Careers</Link>
           </div>
         </div>
       </div>
