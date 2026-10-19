@@ -2,7 +2,6 @@ import React from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/sections/Hero';
 import { About } from '@/components/sections/About';
-import { Leadership } from '@/components/sections/Leadership';
 import { Services } from '@/components/sections/Services';
 import { Industries } from '@/components/sections/Industries';
 import { TechStack } from '@/components/sections/TechStack';
@@ -27,7 +26,6 @@ export default function Home() {
       <CaseStudies />
       <Blog />
       <About />
-      <Leadership />
       <Careers />
       <USP />
       <Testimonials />
