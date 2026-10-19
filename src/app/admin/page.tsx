@@ -33,7 +33,9 @@ import {
   CheckCircle2,
   Target,
   FileBadge,
-  Linkedin
+  Linkedin,
+  Download,
+  FileSpreadsheet
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -132,10 +134,15 @@ export default function AdminDashboard() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync with localStorage for demonstration
+  // Sync with localStorage
   useEffect(() => {
-    const savedApps = JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]');
-    setApplications(savedApps);
+    const loadApps = () => {
+      const savedApps = JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]');
+      setApplications(savedApps);
+    };
+    loadApps();
+    window.addEventListener('storage', loadApps);
+    return () => window.removeEventListener('storage', loadApps);
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +200,7 @@ export default function AdminDashboard() {
       },
       careers: () => {
         if (editingItem) {
-          setCareers(prev => prev.map(c => c.id === editingItem.id ? { ...c, ...data } : c));
+          setCareers(prev => prev.map(c => s.id === editingItem.id ? { ...c, ...data } : s));
         } else {
           setCareers(prev => [...prev, { id: Date.now(), ...data }]);
         }
@@ -215,13 +222,71 @@ export default function AdminDashboard() {
       careers: setCareers,
       inquiries: setInquiries,
       applications: (fn: any) => {
-        setApplications(fn);
-        const currentApps = JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]');
-        localStorage.setItem('xgeniq_career_apps', JSON.stringify(currentApps.filter((a: any) => a.id !== id)));
+        const newApps = fn(applications);
+        setApplications(newApps);
+        localStorage.setItem('xgeniq_career_apps', JSON.stringify(newApps));
       }
     };
     setters[type]( (prev: any[]) => prev.filter(item => item.id !== id));
     toast({ variant: "destructive", title: "Deleted", description: "Item removed from system." });
+  };
+
+  const exportApplicationsToCSV = () => {
+    if (applications.length === 0) {
+      toast({ title: "No Data", description: "No applications available to export." });
+      return;
+    }
+    const headers = ["ID", "Name", "Email", "Phone", "LinkedIn", "Job Title", "Job ID", "Date", "Status"];
+    const rows = applications.map(app => [
+      app.id,
+      app.name,
+      app.email,
+      app.phone,
+      app.linkedin,
+      app.jobTitle,
+      app.jobId,
+      app.date,
+      app.status
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers, ...rows].map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `XgenIq_Applications_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({ title: "Export Started", description: "Your CSV file is being generated." });
+  };
+
+  const downloadAppDetails = (app: any) => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(app, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `Candidate_${app.name.replace(/\s+/g, '_')}_Profile.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+    toast({ title: "Export Success", description: "Candidate profile exported as JSON." });
+  };
+
+  const simulateCVDownload = (app: any) => {
+    toast({ title: "Connecting to Storage...", description: `Retrieving CV for ${app.name}` });
+    setTimeout(() => {
+      const blob = new Blob([`Simulated CV File Content for candidate: ${app.name}`], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${app.name.replace(/\s+/g, '_')}_Resume.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast({ title: "Download Complete", description: "CV file successfully retrieved." });
+    }, 800);
   };
 
   return (
@@ -281,95 +346,102 @@ export default function AdminDashboard() {
                   <CardTitle className="text-2xl font-bold capitalize">{activeTab} Management</CardTitle>
                   <CardDescription>Manage the records displayed in the {activeTab} section.</CardDescription>
                 </div>
-                {!['inquiries', 'applications'].includes(activeTab) && (
-                  <Dialog open={isModalOpen} onOpenChange={(open) => { setIsModalOpen(open); if(!open) resetForm(); }}>
-                    <DialogTrigger asChild>
-                      <Button className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
-                        <Plus className="w-4 h-4 mr-2" /> Add Record
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-xl">
-                      <DialogHeader>
-                        <DialogTitle>{editingItem ? "Edit Record" : "Add New Record"}</DialogTitle>
-                        <DialogDescription>Fill in the details for the {activeTab} section.</DialogDescription>
-                      </DialogHeader>
-                      <form onSubmit={handleSave} className="space-y-6 py-4">
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="title">Title / Name</Label>
-                            <Input id="title" name="title" defaultValue={editingItem?.title || editingItem?.name} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                <div className="flex items-center gap-3">
+                  {activeTab === 'applications' && (
+                    <Button variant="outline" size="sm" className="rounded-full border-white/10 hidden sm:flex" onClick={exportApplicationsToCSV} suppressHydrationWarning>
+                      <FileSpreadsheet className="w-4 h-4 mr-2" /> Export to CSV
+                    </Button>
+                  )}
+                  {!['inquiries', 'applications'].includes(activeTab) && (
+                    <Dialog open={isModalOpen} onOpenChange={(open) => { setIsModalOpen(open); if(!open) resetForm(); }}>
+                      <DialogTrigger asChild>
+                        <Button className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
+                          <Plus className="w-4 h-4 mr-2" /> Add Record
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-xl" suppressHydrationWarning>
+                        <DialogHeader>
+                          <DialogTitle>{editingItem ? "Edit Record" : "Add New Record"}</DialogTitle>
+                          <DialogDescription>Fill in the details for the {activeTab} section.</DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleSave} className="space-y-6 py-4">
+                          <div className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="title">Title / Name</Label>
+                              <Input id="title" name="title" defaultValue={editingItem?.title || editingItem?.name} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                            </div>
+                            
+                            {activeTab === 'blogs' && (
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="category">Category</Label>
+                                  <Input id="category" name="category" defaultValue={editingItem?.category} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="author">Author</Label>
+                                  <Input id="author" name="author" defaultValue={editingItem?.author} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                                </div>
+                              </div>
+                            )}
+
+                            {activeTab === 'careers' && (
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="department">Department</Label>
+                                  <Input id="department" name="department" defaultValue={editingItem?.department} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="location">Location</Label>
+                                  <Input id="location" name="location" defaultValue={editingItem?.location} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                                </div>
+                              </div>
+                            )}
+
+                            {(activeTab === 'services' || activeTab === 'industries' || activeTab === 'training') && (
+                              <div className="space-y-2">
+                                <Label htmlFor="summary">Brief Summary / Description</Label>
+                                <Textarea id="summary" name={activeTab === 'training' ? 'description' : 'summary'} defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[100px]" suppressHydrationWarning />
+                              </div>
+                            )}
+
+                            {['blogs', 'training', 'industries'].includes(activeTab) && (
+                              <div className="space-y-2">
+                                <Label className="flex items-center gap-2">
+                                  <Upload className="w-4 h-4 text-primary" /> Feature Image (Local Device)
+                                </Label>
+                                <div className="flex gap-4 items-center">
+                                  <div className="relative w-24 h-24 rounded-lg border border-white/10 bg-white/5 overflow-hidden flex items-center justify-center">
+                                    {previewImage || editingItem?.imageUrl ? (
+                                      <Image src={previewImage || editingItem.imageUrl} alt="Preview" fill className="object-cover" />
+                                    ) : (
+                                      <ImageIcon className="w-8 h-8 text-muted-foreground opacity-20" />
+                                    )}
+                                  </div>
+                                  <div className="flex-1">
+                                    <Input 
+                                      type="file" 
+                                      accept="image/*" 
+                                      ref={fileInputRef} 
+                                      onChange={handleImageChange}
+                                      className="bg-secondary/50 border-white/5 file:bg-primary file:text-primary-foreground file:border-none file:rounded file:px-2 file:py-1 file:text-xs file:mr-2"
+                                      suppressHydrationWarning
+                                    />
+                                    <p className="text-[10px] text-muted-foreground mt-2">Recommended: 800x450px or 16:9 ratio.</p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          
-                          {activeTab === 'blogs' && (
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="category">Category</Label>
-                                <Input id="category" name="category" defaultValue={editingItem?.category} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="author">Author</Label>
-                                <Input id="author" name="author" defaultValue={editingItem?.author} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                              </div>
-                            </div>
-                          )}
-
-                          {activeTab === 'careers' && (
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="department">Department</Label>
-                                <Input id="department" name="department" defaultValue={editingItem?.department} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="location">Location</Label>
-                                <Input id="location" name="location" defaultValue={editingItem?.location} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                              </div>
-                            </div>
-                          )}
-
-                          {(activeTab === 'services' || activeTab === 'industries' || activeTab === 'training') && (
-                            <div className="space-y-2">
-                              <Label htmlFor="summary">Brief Summary / Description</Label>
-                              <Textarea id="summary" name={activeTab === 'training' ? 'description' : 'summary'} defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[100px]" suppressHydrationWarning />
-                            </div>
-                          )}
-
-                          {['blogs', 'training', 'industries'].includes(activeTab) && (
-                            <div className="space-y-2">
-                              <Label className="flex items-center gap-2">
-                                <Upload className="w-4 h-4 text-primary" /> Feature Image (Local Device)
-                              </Label>
-                              <div className="flex gap-4 items-center">
-                                <div className="relative w-24 h-24 rounded-lg border border-white/10 bg-white/5 overflow-hidden flex items-center justify-center">
-                                  {previewImage || editingItem?.imageUrl ? (
-                                    <Image src={previewImage || editingItem.imageUrl} alt="Preview" fill className="object-cover" />
-                                  ) : (
-                                    <ImageIcon className="w-8 h-8 text-muted-foreground opacity-20" />
-                                  )}
-                                </div>
-                                <div className="flex-1">
-                                  <Input 
-                                    type="file" 
-                                    accept="image/*" 
-                                    ref={fileInputRef} 
-                                    onChange={handleImageChange}
-                                    className="bg-secondary/50 border-white/5 file:bg-primary file:text-primary-foreground file:border-none file:rounded file:px-2 file:py-1 file:text-xs file:mr-2"
-                                    suppressHydrationWarning
-                                  />
-                                  <p className="text-[10px] text-muted-foreground mt-2">Recommended: 800x450px or 16:9 ratio.</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <DialogFooter>
-                          <Button type="submit" className="w-full" suppressHydrationWarning>
-                            {editingItem ? "Update Changes" : "Create Record"}
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                )}
+                          <DialogFooter>
+                            <Button type="submit" className="w-full" suppressHydrationWarning>
+                              {editingItem ? "Update Changes" : "Create Record"}
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                </div>
               </CardHeader>
               <CardContent className="pt-6 px-0">
                 <Table>
@@ -458,7 +530,7 @@ export default function AdminDashboard() {
                                     <ExternalLink className="w-3 h-3 mr-1" /> Details
                                   </Button>
                                 </DialogTrigger>
-                                <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-3xl max-h-[90vh] flex flex-col p-0">
+                                <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-3xl max-h-[90vh] flex flex-col p-0" suppressHydrationWarning>
                                   <DialogHeader className="p-6 border-b border-white/5">
                                     <div className="flex items-center justify-between">
                                       <div className="space-y-1">
@@ -609,7 +681,7 @@ export default function AdminDashboard() {
                                     <ExternalLink className="w-3 h-3 mr-1" /> View App
                                   </Button>
                                 </DialogTrigger>
-                                <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-3xl max-h-[90vh] flex flex-col p-0">
+                                <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-3xl max-h-[90vh] flex flex-col p-0" suppressHydrationWarning>
                                   <DialogHeader className="p-6 border-b border-white/5">
                                     <div className="flex items-center justify-between">
                                       <div className="space-y-1">
@@ -619,9 +691,14 @@ export default function AdminDashboard() {
                                         </DialogTitle>
                                         <DialogDescription className="text-muted-foreground">Applied on {selectedApp?.date}</DialogDescription>
                                       </div>
-                                      <Badge className={selectedApp?.status === 'New' ? 'bg-amber-500 text-white' : 'bg-green-500 text-white'}>
-                                        {selectedApp?.status}
-                                      </Badge>
+                                      <div className="flex items-center gap-3">
+                                        <Button variant="outline" size="icon" className="h-8 w-8 rounded-full border-white/10 hover:bg-primary/10" onClick={() => downloadAppDetails(selectedApp)} title="Export Data as JSON" suppressHydrationWarning>
+                                          <Download className="w-4 h-4" />
+                                        </Button>
+                                        <Badge className={selectedApp?.status === 'New' ? 'bg-amber-500 text-white' : 'bg-green-500 text-white'}>
+                                          {selectedApp?.status}
+                                        </Badge>
+                                      </div>
                                     </div>
                                   </DialogHeader>
 
@@ -649,9 +726,14 @@ export default function AdminDashboard() {
                                       <Separator className="bg-white/5" />
 
                                       <section className="space-y-4">
-                                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                                          <User className="w-4 h-4" /> Candidate Details
-                                        </h4>
+                                        <div className="flex items-center justify-between">
+                                          <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                            <User className="w-4 h-4" /> Candidate Details
+                                          </h4>
+                                          <Button variant="link" className="text-xs h-auto p-0 flex items-center gap-1 text-primary" onClick={() => simulateCVDownload(selectedApp)} suppressHydrationWarning>
+                                            <Download className="w-3 h-3" /> Download CV
+                                          </Button>
+                                        </div>
                                         <div className="grid md:grid-cols-2 gap-6 p-6 rounded-xl bg-white/5 border border-white/10">
                                           <div className="space-y-4">
                                             <div className="flex items-center gap-3">
