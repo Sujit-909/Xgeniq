@@ -25,7 +25,13 @@ import {
   Upload,
   User,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  Clock,
+  Globe,
+  Phone,
+  Layers,
+  Info,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -54,6 +60,8 @@ import { Label } from "@/components/ui/label";
 import { Logo } from '@/components/brand/Logo';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 
 // Initial Mock Data
 const INITIAL_SERVICES = [
@@ -81,8 +89,42 @@ const INITIAL_CAREERS = [
 ];
 
 const INITIAL_INQUIRIES = [
-  { id: 1, name: "John Doe", company: "Global Tech Inc", email: "john@tech.com", service: "SAP BTP", date: "2024-03-01", status: "Pending" },
-  { id: 2, name: "Sarah Smith", company: "Energy Corp", email: "sarah@energy.com", service: "Cloud & DevOps", date: "2024-03-02", status: "Contacted" }
+  { 
+    id: 1, 
+    name: "John Doe", 
+    company: "Global Tech Inc", 
+    email: "john@tech.com", 
+    service: "SAP BTP", 
+    date: "2024-03-01", 
+    status: "Pending",
+    industry: "Technology",
+    jobTitle: "CTO",
+    phone: "+1 (555) 123-4567",
+    country: "USA",
+    requirement: "We are looking to modernize our SAP ECC landscape to S/4HANA and want to build custom extensions using SAP BTP and CAPM.",
+    stage: "Planning",
+    timeline: "3–6 Months",
+    technologies: ["SAP ECC", "AWS", "Custom Apps"],
+    sapEnv: "SAP ECC"
+  },
+  { 
+    id: 2, 
+    name: "Sarah Smith", 
+    company: "Energy Corp", 
+    email: "sarah@energy.com", 
+    service: "Cloud & DevOps", 
+    date: "2024-03-02", 
+    status: "Contacted",
+    industry: "Energy & Utilities",
+    jobTitle: "IT Director",
+    phone: "+44 20 7946 0958",
+    country: "UK",
+    requirement: "Need expert assistance in setting up a robust CI/CD pipeline on Azure for our legacy .NET applications.",
+    stage: "Requirement Definition",
+    timeline: "Immediate",
+    technologies: ["Microsoft", "Azure"],
+    sapEnv: "Not Applicable"
+  }
 ];
 
 export default function AdminDashboard() {
@@ -96,8 +138,10 @@ export default function AdminDashboard() {
   
   // States for modals
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("services");
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -335,7 +379,7 @@ export default function AdminDashboard() {
                   <TableHeader>
                     <TableRow className="border-white/5 hover:bg-transparent text-xs uppercase tracking-widest text-muted-foreground">
                       {['blogs', 'training', 'industries'].includes(activeTab) && <TableHead className="pl-6 w-24">Visual</TableHead>}
-                      <TableHead className={!['blogs', 'training', 'industries'].includes(activeTab) ? "pl-6" : ""}>Title</TableHead>
+                      <TableHead className={cn(!['blogs', 'training', 'industries'].includes(activeTab) ? "pl-6" : "")}>Title</TableHead>
                       {activeTab === 'services' && <TableHead>Category</TableHead>}
                       {activeTab === 'careers' && <TableHead>Dept / Location</TableHead>}
                       {activeTab === 'inquiries' && <TableHead>Company / Service</TableHead>}
@@ -355,7 +399,7 @@ export default function AdminDashboard() {
                             <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-white/5">
                               <Image 
                                 src={item.imageUrl || "https://placehold.co/100x100/121212/EAB308?text=X"} 
-                                alt={item.title} 
+                                alt={item.title || item.name} 
                                 fill 
                                 className="object-cover"
                               />
@@ -401,9 +445,159 @@ export default function AdminDashboard() {
                                 </Button>
                               </>
                             ) : (
-                              <Button variant="ghost" size="sm" className="text-xs hover:text-primary" suppressHydrationWarning>
-                                <ExternalLink className="w-3 h-3 mr-1" /> Details
-                              </Button>
+                              <Dialog open={isInquiryModalOpen && selectedInquiry?.id === item.id} onOpenChange={(open) => { setIsInquiryModalOpen(open); if(!open) setSelectedInquiry(null); }}>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="text-xs hover:text-primary" 
+                                    onClick={() => setSelectedInquiry(item)}
+                                    suppressHydrationWarning
+                                  >
+                                    <ExternalLink className="w-3 h-3 mr-1" /> Details
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-3xl max-h-[90vh] flex flex-col p-0">
+                                  <DialogHeader className="p-6 border-b border-white/5">
+                                    <div className="flex items-center justify-between">
+                                      <div className="space-y-1">
+                                        <Badge className="bg-primary/10 text-primary border-primary/20 mb-2">Inquiry ID: #{selectedInquiry?.id}</Badge>
+                                        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                                          <Mail className="w-5 h-5 text-primary" /> {selectedInquiry?.name}
+                                        </DialogTitle>
+                                        <DialogDescription className="text-muted-foreground">{selectedInquiry?.date} • {selectedInquiry?.company}</DialogDescription>
+                                      </div>
+                                      <Badge className={selectedInquiry?.status === 'Pending' ? 'bg-amber-500 text-white' : 'bg-green-500 text-white'}>
+                                        {selectedInquiry?.status}
+                                      </Badge>
+                                    </div>
+                                  </DialogHeader>
+
+                                  <ScrollArea className="flex-1 p-6">
+                                    <div className="space-y-8">
+                                      {/* Business Context Section */}
+                                      <section className="space-y-4">
+                                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                          <MessageSquare className="w-4 h-4" /> Business Requirement
+                                        </h4>
+                                        <div className="p-4 rounded-xl bg-secondary/30 border border-white/5 italic text-muted-foreground leading-relaxed">
+                                          "{selectedInquiry?.requirement || 'No detailed requirement provided.'}"
+                                        </div>
+                                      </section>
+
+                                      {/* Project Details Grid */}
+                                      <div className="grid md:grid-cols-2 gap-8">
+                                        <section className="space-y-4">
+                                          <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                            <Layers className="w-4 h-4" /> Project Intel
+                                          </h4>
+                                          <div className="space-y-3">
+                                            <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                              <span className="text-sm text-muted-foreground flex items-center gap-2"><Target className="w-3 h-3" /> Requested Service</span>
+                                              <span className="text-sm font-medium text-primary">{selectedInquiry?.service}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                              <span className="text-sm text-muted-foreground flex items-center gap-2"><Clock className="w-3 h-3" /> Expected Timeline</span>
+                                              <span className="text-sm font-medium">{selectedInquiry?.timeline || 'Not Specified'}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                              <span className="text-sm text-muted-foreground flex items-center gap-2"><Info className="w-3 h-3" /> Current Stage</span>
+                                              <span className="text-sm font-medium">{selectedInquiry?.stage || 'Researching'}</span>
+                                            </div>
+                                          </div>
+                                        </section>
+
+                                        <section className="space-y-4">
+                                          <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                            <Cpu className="w-4 h-4" /> Tech Landscape
+                                          </h4>
+                                          <div className="space-y-3">
+                                            <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                              <span className="text-sm text-muted-foreground">SAP Environment</span>
+                                              <Badge variant="outline" className="border-white/10">{selectedInquiry?.sapEnv || 'None'}</Badge>
+                                            </div>
+                                            <div className="space-y-2">
+                                              <span className="text-sm text-muted-foreground">Current Ecosystem</span>
+                                              <div className="flex flex-wrap gap-2">
+                                                {selectedInquiry?.technologies?.length ? selectedInquiry.technologies.map((t: string) => (
+                                                  <Badge key={t} variant="secondary" className="text-[10px] bg-white/5">{t}</Badge>
+                                                )) : <span className="text-xs italic text-muted-foreground">None listed</span>}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </section>
+                                      </div>
+
+                                      <Separator className="bg-white/5" />
+
+                                      {/* Contact Information */}
+                                      <section className="space-y-4">
+                                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                          <User className="w-4 h-4" /> Contact Information
+                                        </h4>
+                                        <div className="grid md:grid-cols-2 gap-6 p-6 rounded-xl bg-primary/5 border border-primary/10">
+                                          <div className="space-y-4">
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <Mail className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Email Address</p>
+                                                <a href={`mailto:${selectedInquiry?.email}`} className="text-sm font-medium hover:text-primary transition-colors">{selectedInquiry?.email}</a>
+                                              </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <Phone className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Phone Number</p>
+                                                <span className="text-sm font-medium">{selectedInquiry?.phone || 'N/A'}</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="space-y-4">
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <Building2 className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Job Title / Company</p>
+                                                <span className="text-sm font-medium">{selectedInquiry?.jobTitle || 'Lead'} @ {selectedInquiry?.company}</span>
+                                              </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <Globe className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Location / Industry</p>
+                                                <span className="text-sm font-medium">{selectedInquiry?.country} ({selectedInquiry?.industry})</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </section>
+                                    </div>
+                                  </ScrollArea>
+
+                                  <DialogFooter className="p-6 border-t border-white/5 bg-white/5">
+                                    <div className="flex items-center justify-between w-full">
+                                      <p className="text-xs text-muted-foreground">Inquiry received via Matchmaker Hub on {selectedInquiry?.date}</p>
+                                      <div className="flex gap-3">
+                                        <Button variant="outline" size="sm" className="rounded-full border-white/10" onClick={() => setIsInquiryModalOpen(false)}>Close</Button>
+                                        <Button size="sm" className="rounded-full shadow-lg shadow-primary/20" onClick={() => {
+                                          setInquiries(prev => prev.map(inq => inq.id === selectedInquiry.id ? { ...inq, status: 'Contacted' } : inq));
+                                          toast({ title: "Inquiry Updated", description: "Status marked as Contacted." });
+                                          setIsInquiryModalOpen(false);
+                                        }}>
+                                          <CheckCircle2 className="w-4 h-4 mr-2" /> Mark as Contacted
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
                             )}
                           </div>
                         </TableCell>
