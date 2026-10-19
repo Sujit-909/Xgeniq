@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -31,7 +32,8 @@ import {
   Layers,
   Info,
   CheckCircle2,
-  Target
+  Target,
+  FileBadge
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -106,24 +108,6 @@ const INITIAL_INQUIRIES = [
     timeline: "3–6 Months",
     technologies: ["SAP ECC", "AWS", "Custom Apps"],
     sapEnv: "SAP ECC"
-  },
-  { 
-    id: 2, 
-    name: "Sarah Smith", 
-    company: "Energy Corp", 
-    email: "sarah@energy.com", 
-    service: "Cloud & DevOps", 
-    date: "2024-03-02", 
-    status: "Contacted",
-    industry: "Energy & Utilities",
-    jobTitle: "IT Director",
-    phone: "+44 20 7946 0958",
-    country: "UK",
-    requirement: "Need expert assistance in setting up a robust CI/CD pipeline on Azure for our legacy .NET applications.",
-    stage: "Requirement Definition",
-    timeline: "Immediate",
-    technologies: ["Microsoft", "Azure"],
-    sapEnv: "Not Applicable"
   }
 ];
 
@@ -135,17 +119,25 @@ export default function AdminDashboard() {
   const [industries, setIndustries] = useState(INITIAL_INDUSTRIES);
   const [careers, setCareers] = useState(INITIAL_CAREERS);
   const [inquiries, setInquiries] = useState(INITIAL_INQUIRIES);
+  const [applications, setApplications] = useState<any[]>([]);
   
   // States for modals
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
+  const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("services");
   const [editingItem, setEditingItem] = useState<any>(null);
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
+  const [selectedApp, setSelectedApp] = useState<any>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Simulated Image Upload from Local Device
+  // Sync with localStorage for demonstration
+  useEffect(() => {
+    const savedApps = JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]');
+    setApplications(savedApps);
+  }, []);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -221,7 +213,12 @@ export default function AdminDashboard() {
       training: setTraining,
       industries: setIndustries,
       careers: setCareers,
-      inquiries: setInquiries
+      inquiries: setInquiries,
+      applications: (fn: any) => {
+        setApplications(fn);
+        const currentApps = JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]');
+        localStorage.setItem('xgeniq_career_apps', JSON.stringify(currentApps.filter((a: any) => a.id !== id)));
+      }
     };
     setters[type]( (prev: any[]) => prev.filter(item => item.id !== id));
     toast({ variant: "destructive", title: "Deleted", description: "Item removed from system." });
@@ -261,7 +258,8 @@ export default function AdminDashboard() {
               { id: "services", icon: Cpu, label: "Services" },
               { id: "training", icon: GraduationCap, label: "Training" },
               { id: "industries", icon: Building2, label: "Industries" },
-              { id: "careers", icon: Briefcase, label: "Careers" },
+              { id: "careers", icon: Briefcase, label: "Job Postings" },
+              { id: "applications", icon: FileBadge, label: "Job Apps" },
               { id: "blogs", icon: FileText, label: "Insights" },
               { id: "inquiries", icon: Mail, label: "Inquiries" }
             ].map(tab => (
@@ -276,7 +274,6 @@ export default function AdminDashboard() {
             ))}
           </TabsList>
 
-          {/* Section Render Logic */}
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className="glass-card border-white/5">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 border-b border-white/5">
@@ -284,7 +281,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-2xl font-bold capitalize">{activeTab} Management</CardTitle>
                   <CardDescription>Manage the records displayed in the {activeTab} section.</CardDescription>
                 </div>
-                {activeTab !== 'inquiries' && (
+                {!['inquiries', 'applications'].includes(activeTab) && (
                   <Dialog open={isModalOpen} onOpenChange={(open) => { setIsModalOpen(open); if(!open) resetForm(); }}>
                     <DialogTrigger asChild>
                       <Button className="rounded-full shadow-lg shadow-primary/20" suppressHydrationWarning>
@@ -379,11 +376,12 @@ export default function AdminDashboard() {
                   <TableHeader>
                     <TableRow className="border-white/5 hover:bg-transparent text-xs uppercase tracking-widest text-muted-foreground">
                       {['blogs', 'training', 'industries'].includes(activeTab) && <TableHead className="pl-6 w-24">Visual</TableHead>}
-                      <TableHead className={cn(!['blogs', 'training', 'industries'].includes(activeTab) ? "pl-6" : "")}>Title</TableHead>
+                      <TableHead className={cn(!['blogs', 'training', 'industries'].includes(activeTab) ? "pl-6" : "")}>Title / Candidate</TableHead>
                       {activeTab === 'services' && <TableHead>Category</TableHead>}
                       {activeTab === 'careers' && <TableHead>Dept / Location</TableHead>}
+                      {activeTab === 'applications' && <TableHead>Applied For</TableHead>}
                       {activeTab === 'inquiries' && <TableHead>Company / Service</TableHead>}
-                      {activeTab === 'inquiries' && <TableHead>Status</TableHead>}
+                      {(activeTab === 'inquiries' || activeTab === 'applications') && <TableHead>Status</TableHead>}
                       <TableHead className="text-right pr-6">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -392,7 +390,8 @@ export default function AdminDashboard() {
                       activeTab === 'blogs' ? blogs : 
                       activeTab === 'training' ? training : 
                       activeTab === 'industries' ? industries : 
-                      activeTab === 'careers' ? careers : inquiries).map((item: any) => (
+                      activeTab === 'careers' ? careers : 
+                      activeTab === 'applications' ? applications : inquiries).map((item: any) => (
                       <TableRow key={item.id} className="border-white/5 group transition-colors hover:bg-white/[0.02]">
                         {['blogs', 'training', 'industries'].includes(activeTab) && (
                           <TableCell className="pl-6">
@@ -412,10 +411,12 @@ export default function AdminDashboard() {
                         
                         {activeTab === 'services' && <TableCell><Badge variant="secondary">{item.category}</Badge></TableCell>}
                         {activeTab === 'careers' && <TableCell className="text-xs">{item.department} • {item.location}</TableCell>}
+                        {activeTab === 'applications' && <TableCell className="text-xs text-primary">{item.jobTitle}</TableCell>}
                         {activeTab === 'inquiries' && <TableCell className="text-xs font-mono">{item.company} <br/> <span className="text-primary">{item.service}</span></TableCell>}
-                        {activeTab === 'inquiries' && (
+                        
+                        {['inquiries', 'applications'].includes(activeTab) && (
                           <TableCell>
-                            <Badge className={item.status === 'Pending' ? 'bg-amber-500/10 text-amber-500' : 'bg-green-500/10 text-green-500'}>
+                            <Badge className={item.status === 'New' || item.status === 'Pending' ? 'bg-amber-500/10 text-amber-500' : 'bg-green-500/10 text-green-500'}>
                               {item.status}
                             </Badge>
                           </TableCell>
@@ -423,7 +424,7 @@ export default function AdminDashboard() {
 
                         <TableCell className="text-right pr-6">
                           <div className="flex items-center justify-end gap-2">
-                            {activeTab !== 'inquiries' ? (
+                            {['services', 'blogs', 'training', 'industries', 'careers'].includes(activeTab) ? (
                               <>
                                 <Button 
                                   variant="ghost" 
@@ -444,7 +445,7 @@ export default function AdminDashboard() {
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </>
-                            ) : (
+                            ) : activeTab === 'inquiries' ? (
                               <Dialog open={isInquiryModalOpen && selectedInquiry?.id === item.id} onOpenChange={(open) => { setIsInquiryModalOpen(open); if(!open) setSelectedInquiry(null); }}>
                                 <DialogTrigger asChild>
                                   <Button 
@@ -475,7 +476,6 @@ export default function AdminDashboard() {
 
                                   <ScrollArea className="flex-1 p-6">
                                     <div className="space-y-8">
-                                      {/* Business Context Section */}
                                       <section className="space-y-4">
                                         <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
                                           <MessageSquare className="w-4 h-4" /> Business Requirement
@@ -485,7 +485,6 @@ export default function AdminDashboard() {
                                         </div>
                                       </section>
 
-                                      {/* Project Details Grid */}
                                       <div className="grid md:grid-cols-2 gap-8">
                                         <section className="space-y-4">
                                           <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
@@ -530,7 +529,6 @@ export default function AdminDashboard() {
 
                                       <Separator className="bg-white/5" />
 
-                                      {/* Contact Information */}
                                       <section className="space-y-4">
                                         <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
                                           <User className="w-4 h-4" /> Contact Information
@@ -583,15 +581,139 @@ export default function AdminDashboard() {
 
                                   <DialogFooter className="p-6 border-t border-white/5 bg-white/5">
                                     <div className="flex items-center justify-between w-full">
-                                      <p className="text-xs text-muted-foreground">Inquiry received via Matchmaker Hub on {selectedInquiry?.date}</p>
+                                      <p className="text-xs text-muted-foreground">Inquiry received on {selectedInquiry?.date}</p>
                                       <div className="flex gap-3">
-                                        <Button variant="outline" size="sm" className="rounded-full border-white/10" onClick={() => setIsInquiryModalOpen(false)}>Close</Button>
+                                        <Button variant="outline" size="sm" className="rounded-full border-white/10" onClick={() => setIsInquiryModalOpen(false)} suppressHydrationWarning>Close</Button>
                                         <Button size="sm" className="rounded-full shadow-lg shadow-primary/20" onClick={() => {
                                           setInquiries(prev => prev.map(inq => inq.id === selectedInquiry.id ? { ...inq, status: 'Contacted' } : inq));
                                           toast({ title: "Inquiry Updated", description: "Status marked as Contacted." });
                                           setIsInquiryModalOpen(false);
-                                        }}>
+                                        }} suppressHydrationWarning>
                                           <CheckCircle2 className="w-4 h-4 mr-2" /> Mark as Contacted
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            ) : (
+                              <Dialog open={isAppModalOpen && selectedApp?.id === item.id} onOpenChange={(open) => { setIsAppModalOpen(open); if(!open) setSelectedApp(null); }}>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="text-xs hover:text-primary" 
+                                    onClick={() => setSelectedApp(item)}
+                                    suppressHydrationWarning
+                                  >
+                                    <ExternalLink className="w-3 h-3 mr-1" /> View App
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="bg-background border-white/10 text-foreground sm:max-w-3xl max-h-[90vh] flex flex-col p-0">
+                                  <DialogHeader className="p-6 border-b border-white/5">
+                                    <div className="flex items-center justify-between">
+                                      <div className="space-y-1">
+                                        <Badge className="bg-primary/10 text-primary border-primary/20 mb-2">Application ID: #{selectedApp?.id}</Badge>
+                                        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                                          <User className="w-5 h-5 text-primary" /> {selectedApp?.name}
+                                        </DialogTitle>
+                                        <DialogDescription className="text-muted-foreground">Applied on {selectedApp?.date}</DialogDescription>
+                                      </div>
+                                      <Badge className={selectedApp?.status === 'New' ? 'bg-amber-500 text-white' : 'bg-green-500 text-white'}>
+                                        {selectedApp?.status}
+                                      </Badge>
+                                    </div>
+                                  </DialogHeader>
+
+                                  <ScrollArea className="flex-1 p-6">
+                                    <div className="space-y-8">
+                                      <section className="space-y-4">
+                                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                          <Briefcase className="w-4 h-4" /> Applied For
+                                        </h4>
+                                        <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10">
+                                          <h5 className="text-xl font-bold text-foreground">{selectedApp?.jobTitle}</h5>
+                                          <p className="text-sm text-muted-foreground mt-1">Ref: {selectedApp?.jobId}</p>
+                                        </div>
+                                      </section>
+
+                                      <section className="space-y-4">
+                                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                          <MessageSquare className="w-4 h-4" /> Cover Letter / Intro
+                                        </h4>
+                                        <div className="p-4 rounded-xl bg-secondary/30 border border-white/5 italic text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                          "{selectedApp?.intro || 'No cover letter provided.'}"
+                                        </div>
+                                      </section>
+
+                                      <Separator className="bg-white/5" />
+
+                                      <section className="space-y-4">
+                                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                          <User className="w-4 h-4" /> Candidate Details
+                                        </h4>
+                                        <div className="grid md:grid-cols-2 gap-6 p-6 rounded-xl bg-white/5 border border-white/10">
+                                          <div className="space-y-4">
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <Mail className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Email</p>
+                                                <a href={`mailto:${selectedApp?.email}`} className="text-sm font-medium hover:text-primary transition-colors">{selectedApp?.email}</a>
+                                              </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <Phone className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Phone</p>
+                                                <span className="text-sm font-medium">{selectedApp?.phone}</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="space-y-4">
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <Linkedin className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">LinkedIn</p>
+                                                <a href={selectedApp?.linkedin} target="_blank" className="text-sm font-medium hover:text-primary transition-colors truncate block max-w-[200px]">{selectedApp?.linkedin}</a>
+                                              </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                              <div className="p-2 rounded-lg bg-background border border-white/5">
+                                                <FileText className="w-4 h-4 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Resume</p>
+                                                <span className="text-sm font-medium italic text-muted-foreground">Resume File Uploaded</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </section>
+                                    </div>
+                                  </ScrollArea>
+
+                                  <DialogFooter className="p-6 border-t border-white/5 bg-white/5">
+                                    <div className="flex items-center justify-between w-full">
+                                      <Button variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => {
+                                        handleDelete(selectedApp.id, 'applications');
+                                        setIsAppModalOpen(false);
+                                      }} suppressHydrationWarning>Delete Application</Button>
+                                      <div className="flex gap-3">
+                                        <Button variant="outline" size="sm" className="rounded-full border-white/10" onClick={() => setIsAppModalOpen(false)} suppressHydrationWarning>Close</Button>
+                                        <Button size="sm" className="rounded-full shadow-lg shadow-primary/20" onClick={() => {
+                                          const newApps = applications.map(a => a.id === selectedApp.id ? { ...a, status: 'Reviewed' } : a);
+                                          setApplications(newApps);
+                                          localStorage.setItem('xgeniq_career_apps', JSON.stringify(newApps));
+                                          toast({ title: "Updated", description: "Marked as Reviewed." });
+                                          setIsAppModalOpen(false);
+                                        }} suppressHydrationWarning>
+                                          Mark as Reviewed
                                         </Button>
                                       </div>
                                     </div>
@@ -616,3 +738,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

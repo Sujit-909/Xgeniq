@@ -260,8 +260,26 @@ export function Careers() {
     return closedRoles.slice(start, start + ITEMS_PER_PAGE);
   }, [closedPage]);
 
-  const handleApplySubmit = (e: React.FormEvent) => {
+  const handleApplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const applicationData = {
+      id: Date.now(),
+      jobId: selectedJob?.jobId,
+      jobTitle: selectedJob?.title,
+      name: formData.get('name') || formData.get('name-quick'),
+      email: formData.get('email') || formData.get('email-quick'),
+      phone: formData.get('phone') || formData.get('phone-quick'),
+      linkedin: formData.get('linkedin') || formData.get('linkedin-quick'),
+      intro: formData.get('cover') || formData.get('cover-quick'),
+      date: new Date().toISOString().split('T')[0],
+      status: 'New'
+    };
+
+    // Save to localStorage for Admin sync
+    const existingApps = JSON.parse(localStorage.getItem('xgeniq_career_apps') || '[]');
+    localStorage.setItem('xgeniq_career_apps', JSON.stringify([applicationData, ...existingApps]));
+
     toast({
       title: "Application Submitted!",
       description: `Your application for ${selectedJob?.title} has been received.`,
@@ -393,7 +411,7 @@ export function Careers() {
                             <div className="flex flex-row sm:flex-col lg:flex-row gap-3 min-w-fit">
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button variant="outline" size="sm" className="rounded-full border-primary/20 hover:bg-primary/10 flex-1 sm:flex-none">
+                                  <Button variant="outline" size="sm" className="rounded-full border-primary/20 hover:bg-primary/10 flex-1 sm:flex-none" suppressHydrationWarning>
                                     <Info className="w-4 h-4 mr-2" /> View Details
                                   </Button>
                                 </DialogTrigger>
@@ -462,7 +480,7 @@ export function Careers() {
                                   <DialogFooter className="border-t border-white/5 pt-6 flex-col sm:flex-row gap-4">
                                     <Dialog>
                                       <DialogTrigger asChild>
-                                        <Button className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
+                                        <Button className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20" suppressHydrationWarning>
                                           Apply Now
                                         </Button>
                                       </DialogTrigger>
@@ -479,38 +497,38 @@ export function Careers() {
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-2">
                                               <Label htmlFor="name" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
-                                              <Input id="name" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
+                                              <Input id="name" name="name" placeholder="John Doe" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                             </div>
                                             <div className="space-y-2">
                                               <Label htmlFor="email" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
-                                              <Input id="email" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
+                                              <Input id="email" name="email" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                             </div>
                                           </div>
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-2">
                                               <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
-                                              <Input id="phone" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
+                                              <Input id="phone" name="phone" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                             </div>
                                             <div className="space-y-2">
                                               <Label htmlFor="linkedin" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
-                                              <Input id="linkedin" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
+                                              <Input id="linkedin" name="linkedin" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                             </div>
                                           </div>
                                           <div className="space-y-2">
                                             <Label htmlFor="cover" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
-                                            <Textarea id="cover" placeholder="What makes you a great fit?" className="min-h-[100px] bg-secondary/50 border-white/10" />
+                                            <Textarea id="cover" name="cover" placeholder="What makes you a great fit?" className="min-h-[100px] bg-secondary/50 border-white/10" suppressHydrationWarning />
                                           </div>
                                           <div className="space-y-2">
                                             <Label htmlFor="cv" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
                                             <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
-                                              <Input id="cv" type="file" accept=".pdf" className="hidden" />
+                                              <Input id="cv" name="cv" type="file" accept=".pdf" className="hidden" suppressHydrationWarning />
                                               <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
                                               <p className="text-sm font-medium">Click to upload CV</p>
                                               <p className="text-xs text-muted-foreground mt-1">PDF format preferred</p>
                                             </div>
                                           </div>
                                           <DialogFooter>
-                                            <Button type="submit" className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
+                                            <Button type="submit" className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20" suppressHydrationWarning>
                                               Submit Application
                                             </Button>
                                           </DialogFooter>
@@ -527,6 +545,7 @@ export function Careers() {
                                     size="sm"
                                     className="rounded-full px-6 flex-1 sm:flex-none shadow-lg shadow-primary/20"
                                     onClick={() => setSelectedJob(role)}
+                                    suppressHydrationWarning
                                   >
                                     Apply Now
                                   </Button>
@@ -544,37 +563,37 @@ export function Careers() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                       <div className="space-y-2">
                                         <Label htmlFor="name-quick" className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Full Name</Label>
-                                        <Input id="name-quick" placeholder="John Doe" required className="bg-secondary/50 border-white/10" />
+                                        <Input id="name-quick" name="name-quick" placeholder="John Doe" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                       </div>
                                       <div className="space-y-2">
                                         <Label htmlFor="email-quick" className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email Address</Label>
-                                        <Input id="email-quick" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" />
+                                        <Input id="email-quick" name="email-quick" type="email" placeholder="john@example.com" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                       </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                       <div className="space-y-2">
                                         <Label htmlFor="phone-quick" className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Phone Number</Label>
-                                        <Input id="phone-quick" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" />
+                                        <Input id="phone-quick" name="phone-quick" placeholder="+1 (555) 000-0000" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                       </div>
                                       <div className="space-y-2">
                                         <Label htmlFor="linkedin-quick" className="flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary" /> LinkedIn Profile</Label>
-                                        <Input id="linkedin-quick" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" />
+                                        <Input id="linkedin-quick" name="linkedin-quick" placeholder="linkedin.com/in/johndoe" required className="bg-secondary/50 border-white/10" suppressHydrationWarning />
                                       </div>
                                     </div>
                                     <div className="space-y-2">
                                       <Label htmlFor="cover-quick" className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Brief Intro</Label>
-                                      <Textarea id="cover-quick" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" />
+                                      <Textarea id="cover-quick" name="cover-quick" placeholder="Tell us why you're a great fit..." className="min-h-[100px] bg-secondary/50 border-white/10" suppressHydrationWarning />
                                     </div>
                                     <div className="space-y-2">
                                       <Label htmlFor="cv-quick" className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Upload CV (PDF)</Label>
                                       <div className="border-2 border-dashed border-white/10 rounded-lg p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors cursor-pointer group">
-                                        <Input id="cv-quick" type="file" accept=".pdf" className="hidden" />
+                                        <Input id="cv-quick" name="cv-quick" type="file" accept=".pdf" className="hidden" suppressHydrationWarning />
                                         <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
                                         <p className="text-sm font-medium">Click to upload CV</p>
                                       </div>
                                     </div>
                                     <DialogFooter>
-                                      <Button type="submit" className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20">
+                                      <Button type="submit" className="w-full rounded-full py-6 font-bold text-lg shadow-xl shadow-primary/20" suppressHydrationWarning>
                                         Submit Application
                                       </Button>
                                     </DialogFooter>
@@ -597,6 +616,7 @@ export function Careers() {
                         className="rounded-full border-white/10 hover:bg-primary/10"
                         disabled={openPage === 1}
                         onClick={() => setOpenPage(p => Math.max(1, p - 1))}
+                        suppressHydrationWarning
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </Button>
@@ -608,6 +628,7 @@ export function Careers() {
                             size="sm"
                             className="w-10 h-10 rounded-full border-white/10"
                             onClick={() => setOpenPage(i + 1)}
+                            suppressHydrationWarning
                           >
                             {i + 1}
                           </Button>
@@ -619,6 +640,7 @@ export function Careers() {
                         className="rounded-full border-white/10 hover:bg-primary/10"
                         disabled={openPage === Math.ceil(filteredOpenRoles.length / ITEMS_PER_PAGE)}
                         onClick={() => setOpenPage(p => p + 1)}
+                        suppressHydrationWarning
                       >
                         <ChevronRight className="w-4 h-4" />
                       </Button>
@@ -629,7 +651,7 @@ export function Careers() {
                 <div className="py-20 text-center space-y-4 bg-secondary/10 rounded-2xl border border-dashed border-white/10">
                   <Search className="w-12 h-12 text-muted-foreground mx-auto opacity-20" />
                   <p className="text-muted-foreground text-lg italic">No roles found matching your search criteria.</p>
-                  <Button variant="link" onClick={() => setSearchTerm("")} className="text-primary font-bold">Clear all filters</Button>
+                  <Button variant="link" onClick={() => setSearchTerm("")} className="text-primary font-bold" suppressHydrationWarning>Clear all filters</Button>
                 </div>
               )}
             </TabsContent>
@@ -656,6 +678,7 @@ export function Careers() {
                     className="rounded-full border-white/10"
                     disabled={closedPage === 1}
                     onClick={() => setClosedPage(p => Math.max(1, p - 1))}
+                    suppressHydrationWarning
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
@@ -667,6 +690,7 @@ export function Careers() {
                         size="sm"
                         className="w-10 h-10 rounded-full border-white/10"
                         onClick={() => setClosedPage(i + 1)}
+                        suppressHydrationWarning
                       >
                         {i + 1}
                       </Button>
@@ -678,6 +702,7 @@ export function Careers() {
                     className="rounded-full border-white/10"
                     disabled={closedPage === Math.ceil(closedRoles.length / ITEMS_PER_PAGE)}
                     onClick={() => setClosedPage(p => p + 1)}
+                    suppressHydrationWarning
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -763,8 +788,8 @@ export function Careers() {
               })}
             </CarouselContent>
             <div className="flex justify-center gap-4 mt-10">
-              <CarouselPrevious className="static translate-y-0 border-white/10 hover:bg-primary/10" />
-              <CarouselNext className="static translate-y-0 border-white/10 hover:bg-primary/10" />
+              <CarouselPrevious className="static translate-y-0 border-white/10 hover:bg-primary/10" suppressHydrationWarning />
+              <CarouselNext className="static translate-y-0 border-white/10 hover:bg-primary/10" suppressHydrationWarning />
             </div>
           </Carousel>
         </div>
@@ -839,3 +864,4 @@ export function Careers() {
     </section>
   );
 }
+
