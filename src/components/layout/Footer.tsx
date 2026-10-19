@@ -101,7 +101,7 @@ export function Footer() {
             © {currentYear} XgenIq Technologies Pvt. Ltd. All Rights Reserved.
           </p>
           <div className="flex gap-8 text-sm text-muted-foreground">
-            <Link href="/admin" className="flex items-center gap-1.5 hover:text-primary transition-colors">
+            <Link href="/login" className="flex items-center gap-1.5 hover:text-primary transition-colors">
               <Lock className="w-3 h-3" /> Admin Portal
             </Link>
             <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>

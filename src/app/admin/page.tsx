@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { 
   Plus, 
   Pencil, 
@@ -35,7 +36,8 @@ import {
   FileBadge,
   Linkedin,
   Download,
-  FileSpreadsheet
+  FileSpreadsheet,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -69,7 +71,11 @@ import { Separator } from '@/components/ui/separator';
 
 export default function AdminDashboard() {
   const { toast } = useToast();
+  const router = useRouter();
   
+  // Auth Check
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   // Local Database States
   const [services, setServices] = useState<any[]>([]);
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -90,8 +96,15 @@ export default function AdminDashboard() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load "Database" on mount
+  // Load "Database" and check auth on mount
   useEffect(() => {
+    const authStatus = localStorage.getItem('xgeniq_auth_session');
+    if (authStatus !== 'authenticated') {
+      router.push('/login');
+      return;
+    }
+    setIsAuthenticated(true);
+
     const loadData = () => {
       setServices(JSON.parse(localStorage.getItem('xgeniq_services') || '[]'));
       setBlogs(JSON.parse(localStorage.getItem('xgeniq_blogs') || '[]'));
@@ -104,7 +117,13 @@ export default function AdminDashboard() {
     loadData();
     window.addEventListener('storage', loadData);
     return () => window.removeEventListener('storage', loadData);
-  }, []);
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('xgeniq_auth_session');
+    toast({ title: "Logged Out", description: "You have been securely signed out." });
+    router.push('/login');
+  };
 
   const syncToLocalStorage = (key: string, data: any[]) => {
     localStorage.setItem(key, JSON.stringify(data));
@@ -252,6 +271,8 @@ export default function AdminDashboard() {
     document.body.removeChild(link);
   };
 
+  if (!isAuthenticated) return null;
+
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
       <nav className="border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0 z-50">
@@ -262,12 +283,15 @@ export default function AdminDashboard() {
             </Link>
             <div className="h-6 w-px bg-white/10 hidden md:block" />
             <span className="hidden md:flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-primary">
-              <ShieldCheck className="w-4 h-4" /> Admin Command Hub (Demo DB)
+              <ShieldCheck className="w-4 h-4" /> Command Hub
             </span>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" asChild className="rounded-full" suppressHydrationWarning>
               <Link href="/"><ChevronLeft className="w-4 h-4 mr-2" /> Live Site</Link>
+            </Button>
+            <Button variant="outline" size="sm" className="rounded-full border-white/10 text-muted-foreground hover:text-destructive" onClick={handleLogout} suppressHydrationWarning>
+              <LogOut className="w-4 h-4 mr-2" /> Logout
             </Button>
           </div>
         </div>
