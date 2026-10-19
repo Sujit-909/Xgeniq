@@ -65,11 +65,11 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                <a href="mailto:info@xgeniq.com" className="hover:text-primary transition-colors">info@xgeniq.com</a>
+                <a href="mailto:admin@xgeniq.com" className="hover:text-primary transition-colors">admin@xgeniq.com</a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                <a href="tel:+91-XXXXXXXXXX" className="hover:text-primary transition-colors">+91-XXXXXXXXXX</a>
+                <a href="tel:+917681034562" className="hover:text-primary transition-colors">+91 7681034562</a>
               </li>
             </ul>
           </div>

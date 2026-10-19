@@ -48,7 +48,7 @@ export function Leadership() {
                   <Link href="#" className="p-2 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground transition-all">
                     <Linkedin className="w-5 h-5" />
                   </Link>
-                  <Link href="mailto:info@xgeniq.com" className="p-2 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground transition-all">
+                  <Link href="mailto:admin@xgeniq.com" className="p-2 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground transition-all">
                     <Mail className="w-5 h-5" />
                   </Link>
                 </div>
