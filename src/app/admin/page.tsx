@@ -53,6 +53,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Logo } from '@/components/brand/Logo';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 // Initial Mock Data
 const INITIAL_SERVICES = [
@@ -262,11 +263,11 @@ export default function AdminDashboard() {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <Label htmlFor="category">Category</Label>
-                                <Input id="category" name="category" defaultValue={editingItem?.category} required className="bg-secondary/50 border-white/5" />
+                                <Input id="category" name="category" defaultValue={editingItem?.category} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
                               </div>
                               <div className="space-y-2">
                                 <Label htmlFor="author">Author</Label>
-                                <Input id="author" name="author" defaultValue={editingItem?.author} required className="bg-secondary/50 border-white/5" />
+                                <Input id="author" name="author" defaultValue={editingItem?.author} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
                               </div>
                             </div>
                           )}
@@ -275,11 +276,11 @@ export default function AdminDashboard() {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <Label htmlFor="department">Department</Label>
-                                <Input id="department" name="department" defaultValue={editingItem?.department} required className="bg-secondary/50 border-white/5" />
+                                <Input id="department" name="department" defaultValue={editingItem?.department} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
                               </div>
                               <div className="space-y-2">
                                 <Label htmlFor="location">Location</Label>
-                                <Input id="location" name="location" defaultValue={editingItem?.location} required className="bg-secondary/50 border-white/5" />
+                                <Input id="location" name="location" defaultValue={editingItem?.location} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
                               </div>
                             </div>
                           )}
@@ -287,7 +288,7 @@ export default function AdminDashboard() {
                           {(activeTab === 'services' || activeTab === 'industries' || activeTab === 'training') && (
                             <div className="space-y-2">
                               <Label htmlFor="summary">Brief Summary / Description</Label>
-                              <Textarea id="summary" name={activeTab === 'training' ? 'description' : 'summary'} defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[100px]" />
+                              <Textarea id="summary" name={activeTab === 'training' ? 'description' : 'summary'} defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[100px]" suppressHydrationWarning />
                             </div>
                           )}
 
@@ -311,6 +312,7 @@ export default function AdminDashboard() {
                                     ref={fileInputRef} 
                                     onChange={handleImageChange}
                                     className="bg-secondary/50 border-white/5 file:bg-primary file:text-primary-foreground file:border-none file:rounded file:px-2 file:py-1 file:text-xs file:mr-2"
+                                    suppressHydrationWarning
                                   />
                                   <p className="text-[10px] text-muted-foreground mt-2">Recommended: 800x450px or 16:9 ratio.</p>
                                 </div>
