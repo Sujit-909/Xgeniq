@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -8,10 +9,8 @@ import {
   Plus, 
   Pencil, 
   Trash2, 
-  ChevronLeft, 
   Settings, 
   FileText, 
-  Layout, 
   Cpu, 
   MessageSquare,
   Search,
@@ -24,7 +23,6 @@ import {
   Mail,
   Upload,
   User,
-  ExternalLink,
   ShieldCheck,
   Clock,
   Globe,
@@ -42,7 +40,8 @@ import {
   Quote,
   BriefcaseBusiness,
   Lightbulb,
-  Boxes
+  Boxes,
+  Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -73,9 +72,8 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Default Data Constants
+// Default Data Constants for Demo Persistence
 const DEFAULT_TESTIMONIALS = [
   { id: 1, name: "Strategic Lead", company: "Bid Master", rating: "5", text: "The reverse auction system developed by XgenIq has completely transformed our procurement process. The transparency and efficiency gains were immediate.", imageUrl: null },
   { id: 2, name: "Operations Director", company: "Tiwari Propmart", rating: "5", text: "XgenIq delivered a custom software solution that perfectly aligned with our real estate operations. Their attention to detail is truly commendable.", imageUrl: null }
@@ -89,10 +87,6 @@ const DEFAULT_SERVICES = [
 
 const DEFAULT_BLOGS = [
   { id: 1, title: "Mastering SAP BTP: The Future of Extensions", category: "SAP BTP", author: "Tech Lead", date: "2024-03-01", summary: "An in-depth look at CAPM and RAP for modern enterprise scaling.", imageUrl: null }
-];
-
-const DEFAULT_CAREERS = [
-  { id: 1, title: "Senior SAP BTP Consultant", department: "Enterprise Solutions", location: "Cuttack / Remote", type: "Full-time", postedDate: "2024-03-01", summary: "Lead high-impact digital transformations." }
 ];
 
 export default function AdminDashboard() {
@@ -114,11 +108,14 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<any[]>([]);
   const [caseStudies, setCaseStudies] = useState<any[]>([]);
 
+  // Selection States for Details View
+  const [selectedApp, setSelectedApp] = useState<any>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
+
   // UI States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const authStatus = localStorage.getItem('xgeniq_auth_session');
@@ -142,7 +139,7 @@ export default function AdminDashboard() {
       setBlogs(getOrInit('xgeniq_blogs', DEFAULT_BLOGS));
       setTraining(getOrInit('xgeniq_training', []));
       setIndustries(getOrInit('xgeniq_industries', []));
-      setCareers(getOrInit('xgeniq_careers', DEFAULT_CAREERS));
+      setCareers(getOrInit('xgeniq_careers', []));
       setInquiries(getOrInit('xgeniq_inquiries', []));
       setApplications(getOrInit('xgeniq_career_apps', []));
       setTestimonials(getOrInit('xgeniq_testimonials', DEFAULT_TESTIMONIALS));
@@ -202,7 +199,7 @@ export default function AdminDashboard() {
 
     target.setter(newList);
     syncToLocalStorage(target.storage, newList);
-    toast({ title: "Success", description: "Database synchronized." });
+    toast({ title: "Success", description: "Record synchronized." });
     setIsModalOpen(false);
     setEditingItem(null);
     setPreviewImage(null);
@@ -229,6 +226,22 @@ export default function AdminDashboard() {
     toast({ variant: "destructive", title: "Deleted", description: "Record removed." });
   };
 
+  const exportToCSV = () => {
+    const data = activeTab === 'applications' ? applications : inquiries;
+    if (data.length === 0) return;
+    
+    const headers = Object.keys(data[0]).join(",");
+    const rows = data.map(obj => Object.values(obj).join(",")).join("\n");
+    const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + rows;
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${activeTab}_export_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!isAuthenticated) return null;
 
   return (
@@ -240,7 +253,7 @@ export default function AdminDashboard() {
             <span className="text-xs font-bold text-primary flex items-center gap-2 uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
               <ShieldCheck className="w-3 h-3" /> Root Access
             </span>
-            <Button variant="outline" size="sm" className="rounded-full border-white/10" onClick={handleLogout} suppressHydrationWarning>
+            <Button variant="outline" size="sm" className="rounded-full border-white/10" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" /> Logout
             </Button>
           </div>
@@ -267,7 +280,7 @@ export default function AdminDashboard() {
               { id: "testimonials", icon: Star, label: "Reviews" },
               { id: "training", icon: GraduationCap, label: "Training" }
             ].map(tab => (
-              <TabsTrigger key={tab.id} value={tab.id} className="gap-2 py-2 text-[10px] uppercase font-bold tracking-tighter" suppressHydrationWarning>
+              <TabsTrigger key={tab.id} value={tab.id} className="gap-2 py-2 text-[10px] uppercase font-bold tracking-tighter">
                 <tab.icon className="w-3 h-3" /> {tab.label}
               </TabsTrigger>
             ))}
@@ -279,66 +292,72 @@ export default function AdminDashboard() {
                 <CardTitle className="text-xl font-bold capitalize">{activeTab} Management</CardTitle>
                 <CardDescription>Real-time control for {activeTab}.</CardDescription>
               </div>
-              {!['inquiries', 'applications'].includes(activeTab) && (
-                <Dialog open={isModalOpen} onOpenChange={(o) => { setIsModalOpen(o); if(!o) { setEditingItem(null); setPreviewImage(null); } }}>
-                  <DialogTrigger asChild>
-                    <Button size="sm" className="rounded-full shadow-lg" suppressHydrationWarning><Plus className="w-4 h-4 mr-2" /> Add {activeTab}</Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-background border-white/10 sm:max-w-xl" suppressHydrationWarning>
-                    <DialogHeader><DialogTitle>{editingItem ? 'Edit' : 'Add'} {activeTab}</DialogTitle></DialogHeader>
-                    <form onSubmit={handleSave} className="space-y-4 py-4">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label>Title / Name</Label>
-                          <Input name="title" defaultValue={editingItem?.title || editingItem?.name} required className="bg-secondary/50 border-white/5" suppressHydrationWarning />
-                        </div>
-                        {activeTab === 'services' && (
+              <div className="flex gap-2">
+                {['inquiries', 'applications'].includes(activeTab) && (
+                  <Button variant="outline" size="sm" className="rounded-full" onClick={exportToCSV}>
+                    <FileSpreadsheet className="w-4 h-4 mr-2" /> Export CSV
+                  </Button>
+                )}
+                {!['inquiries', 'applications'].includes(activeTab) && (
+                  <Dialog open={isModalOpen} onOpenChange={(o) => { setIsModalOpen(o); if(!o) { setEditingItem(null); setPreviewImage(null); } }}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" className="rounded-full shadow-lg"><Plus className="w-4 h-4 mr-2" /> Add New</Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-background border-white/10 sm:max-w-xl">
+                      <DialogHeader><DialogTitle>{editingItem ? 'Edit' : 'Add'} {activeTab}</DialogTitle></DialogHeader>
+                      <form onSubmit={handleSave} className="space-y-4 py-4">
+                        <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label>Category</Label>
-                            <Input name="category" defaultValue={editingItem?.category} className="bg-secondary/50 border-white/5" suppressHydrationWarning />
+                            <Label>Title / Name</Label>
+                            <Input name="title" defaultValue={editingItem?.title || editingItem?.name} required className="bg-secondary/50 border-white/5" />
                           </div>
-                        )}
-                        {['services', 'industries', 'training', 'blogs', 'products', 'caseStudies'].includes(activeTab) && (
-                          <div className="space-y-2">
-                            <Label>Summary / Body</Label>
-                            <Textarea name="summary" defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[100px]" suppressHydrationWarning />
-                          </div>
-                        )}
-                        {activeTab === 'testimonials' && (
-                          <>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2"><Label>Company</Label><Input name="company" defaultValue={editingItem?.company} required suppressHydrationWarning /></div>
-                              <div className="space-y-2"><Label>Rating</Label><Input name="rating" type="number" min="1" max="5" defaultValue={editingItem?.rating || 5} suppressHydrationWarning /></div>
+                          {activeTab === 'services' && (
+                            <div className="space-y-2">
+                              <Label>Category</Label>
+                              <Input name="category" defaultValue={editingItem?.category} className="bg-secondary/50 border-white/5" />
                             </div>
-                            <div className="space-y-2"><Label>Words</Label><Textarea name="text" defaultValue={editingItem?.text} required suppressHydrationWarning /></div>
-                          </>
-                        )}
-                        {['blogs', 'caseStudies', 'products', 'industries', 'testimonials'].includes(activeTab) && (
-                          <div className="space-y-2">
-                            <Label className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Feature Image</Label>
-                            <div className="flex gap-4 items-center">
-                              <div className="w-16 h-16 rounded border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
-                                {previewImage || editingItem?.imageUrl ? <Image src={previewImage || editingItem.imageUrl} alt="Preview" width={64} height={64} className="object-cover" /> : <ImageIcon className="w-6 h-6 opacity-20" />}
+                          )}
+                          {['services', 'industries', 'training', 'blogs', 'products', 'caseStudies'].includes(activeTab) && (
+                            <div className="space-y-2">
+                              <Label>Summary / Body</Label>
+                              <Textarea name="summary" defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[100px]" />
+                            </div>
+                          )}
+                          {activeTab === 'testimonials' && (
+                            <>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2"><Label>Company</Label><Input name="company" defaultValue={editingItem?.company} required /></div>
+                                <div className="space-y-2"><Label>Rating</Label><Input name="rating" type="number" min="1" max="5" defaultValue={editingItem?.rating || 5} /></div>
                               </div>
-                              <Input type="file" onChange={handleImageChange} className="bg-secondary/50 border-white/5 flex-1" suppressHydrationWarning />
+                              <div className="space-y-2"><Label>Words</Label><Textarea name="text" defaultValue={editingItem?.text} required /></div>
+                            </>
+                          )}
+                          {['blogs', 'caseStudies', 'products', 'industries', 'testimonials'].includes(activeTab) && (
+                            <div className="space-y-2">
+                              <Label className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Feature Image</Label>
+                              <div className="flex gap-4 items-center">
+                                <div className="w-16 h-16 rounded border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
+                                  {previewImage || editingItem?.imageUrl ? <Image src={previewImage || editingItem.imageUrl} alt="Preview" width={64} height={64} className="object-cover" /> : <ImageIcon className="w-6 h-6 opacity-20" />}
+                                </div>
+                                <Input type="file" onChange={handleImageChange} className="bg-secondary/50 border-white/5 flex-1" />
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                      <DialogFooter><Button type="submit" className="w-full" suppressHydrationWarning>Save Record</Button></DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              )}
+                          )}
+                        </div>
+                        <DialogFooter><Button type="submit" className="w-full">Save Record</Button></DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="pt-6">
               <Table>
                 <TableHeader>
                   <TableRow className="border-white/5 text-[10px] uppercase tracking-widest text-muted-foreground">
                     <TableHead>Visual</TableHead>
-                    <TableHead>Title</TableHead>
-                    {activeTab === 'services' && <TableHead>Category</TableHead>}
-                    {['inquiries', 'applications'].includes(activeTab) && <TableHead>Status</TableHead>}
+                    <TableHead>Title/Name</TableHead>
+                    <TableHead>Date/Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -359,14 +378,120 @@ export default function AdminDashboard() {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium text-xs max-w-xs truncate">{item.title || item.name}</TableCell>
-                      {activeTab === 'services' && <TableCell><Badge variant="secondary" className="text-[10px]">{item.category}</Badge></TableCell>}
-                      {['inquiries', 'applications'].includes(activeTab) && <TableCell><Badge className="text-[10px]">{item.status}</Badge></TableCell>}
+                      <TableCell>
+                        <Badge variant={item.status === 'New' ? 'default' : 'secondary'} className="text-[9px] uppercase">
+                          {item.status || item.date || 'Active'}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          {!['inquiries', 'applications'].includes(activeTab) && (
-                            <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary" onClick={() => { setEditingItem(item); setPreviewImage(item.imageUrl || null); setIsModalOpen(true); }} suppressHydrationWarning><Pencil className="w-3.5 h-3.5" /></Button>
+                          {activeTab === 'applications' && (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary" onClick={() => setSelectedApp(item)}><Eye className="w-3.5 h-3.5" /></Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-2xl bg-background border-white/10">
+                                <DialogHeader>
+                                  <DialogTitle className="flex items-center gap-2">
+                                    <FileBadge className="w-5 h-5 text-primary" /> Application Details
+                                  </DialogTitle>
+                                </DialogHeader>
+                                <ScrollArea className="max-h-[70vh] pr-4">
+                                  <div className="space-y-8 py-4">
+                                    <div className="grid grid-cols-2 gap-8">
+                                      <div className="space-y-4">
+                                        <div className="flex items-center gap-3">
+                                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary"><User className="w-6 h-6" /></div>
+                                          <div>
+                                            <h4 className="font-bold text-lg">{selectedApp?.name}</h4>
+                                            <p className="text-xs text-muted-foreground">{selectedApp?.email}</p>
+                                          </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <p className="text-xs text-muted-foreground flex items-center gap-2"><Phone className="w-3 h-3" /> {selectedApp?.phone}</p>
+                                          <p className="text-xs text-muted-foreground flex items-center gap-2"><Linkedin className="w-3 h-3" /> {selectedApp?.linkedin}</p>
+                                        </div>
+                                      </div>
+                                      <div className="space-y-4 text-right">
+                                        <Badge className="bg-primary/20 text-primary border-primary/30 uppercase tracking-widest">{selectedApp?.status}</Badge>
+                                        <p className="text-xs text-muted-foreground">Applied: {selectedApp?.date}</p>
+                                      </div>
+                                    </div>
+                                    <Separator className="bg-white/5" />
+                                    <div className="space-y-4">
+                                      <h5 className="text-xs font-bold text-primary uppercase tracking-widest flex items-center gap-2"><Target className="w-4 h-4" /> Target Role</h5>
+                                      <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                                        <h4 className="font-bold text-base">{selectedApp?.jobTitle}</h4>
+                                        <p className="text-xs text-muted-foreground">ID: {selectedApp?.jobId}</p>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <h5 className="text-xs font-bold text-primary uppercase tracking-widest flex items-center gap-2"><Quote className="w-4 h-4" /> Cover Note</h5>
+                                      <p className="text-sm text-muted-foreground leading-relaxed italic">{selectedApp?.intro}</p>
+                                    </div>
+                                    <div className="flex gap-4">
+                                      <Button className="flex-1 rounded-full"><Download className="w-4 h-4 mr-2" /> Download Resume</Button>
+                                      <Button variant="outline" className="flex-1 rounded-full"><Mail className="w-4 h-4 mr-2" /> Contact Candidate</Button>
+                                    </div>
+                                  </div>
+                                </ScrollArea>
+                              </DialogContent>
+                            </Dialog>
                           )}
-                          <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-destructive" onClick={() => handleDelete(item.id)} suppressHydrationWarning><Trash2 className="w-3.5 h-3.5" /></Button>
+                          {activeTab === 'inquiries' && (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary" onClick={() => setSelectedInquiry(item)}><Eye className="w-3.5 h-3.5" /></Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-2xl bg-background border-white/10">
+                                <DialogHeader>
+                                  <DialogTitle className="flex items-center gap-2"><MessageSquare className="w-5 h-5 text-primary" /> Inquiry Analysis</DialogTitle>
+                                </DialogHeader>
+                                <ScrollArea className="max-h-[70vh] pr-4">
+                                  <div className="space-y-8 py-4">
+                                    <div className="flex justify-between items-start">
+                                      <div className="space-y-1">
+                                        <h4 className="text-2xl font-bold">{selectedInquiry?.companyName}</h4>
+                                        <Badge variant="outline" className="text-[10px]">{selectedInquiry?.industry}</Badge>
+                                      </div>
+                                      <Badge className="bg-accent text-accent-foreground uppercase">{selectedInquiry?.status}</Badge>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                                        <p className="text-[10px] uppercase text-primary font-bold">Contact Person</p>
+                                        <p className="text-sm font-bold">{selectedInquiry?.fullName}</p>
+                                        <p className="text-xs text-muted-foreground">{selectedInquiry?.email}</p>
+                                      </div>
+                                      <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                                        <p className="text-[10px] uppercase text-primary font-bold">Project Timeline</p>
+                                        <p className="text-sm font-bold">{selectedInquiry?.timeline}</p>
+                                        <p className="text-xs text-muted-foreground">Stage: {selectedInquiry?.stage}</p>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <h5 className="text-[10px] uppercase text-primary font-bold">Business Requirement</h5>
+                                      <div className="p-4 rounded-xl bg-secondary/30 text-sm text-muted-foreground leading-relaxed">
+                                        {selectedInquiry?.requirement}
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <h5 className="text-[10px] uppercase text-primary font-bold">Requested Services</h5>
+                                      <div className="flex flex-wrap gap-2">
+                                        {selectedInquiry?.services?.map((s: string) => (
+                                          <Badge key={s} variant="secondary">{s}</Badge>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    <Button className="w-full rounded-full py-6 font-bold text-lg"><Mail className="w-4 h-4 mr-2" /> Send Response Proposal</Button>
+                                  </div>
+                                </ScrollArea>
+                              </DialogContent>
+                            </Dialog>
+                          )}
+                          {!['inquiries', 'applications'].includes(activeTab) && (
+                            <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary" onClick={() => { setEditingItem(item); setPreviewImage(item.imageUrl || null); setIsModalOpen(true); }}><Pencil className="w-3.5 h-3.5" /></Button>
+                          )}
+                          <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-destructive" onClick={() => handleDelete(item.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
