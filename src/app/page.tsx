@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/sections/Hero';
@@ -8,6 +9,7 @@ import { TechStack } from '@/components/sections/TechStack';
 import { Products } from '@/components/sections/Products';
 import { CaseStudies } from '@/components/sections/CaseStudies';
 import { Blog } from '@/components/sections/Blog';
+import { Innovation } from '@/components/sections/Innovation';
 import { USP } from '@/components/sections/USP';
 import { Testimonials } from '@/components/sections/Testimonials';
 import { Careers } from '@/components/sections/Careers';
@@ -23,6 +25,7 @@ export default function Home() {
       <Services />
       <Industries />
       <Products />
+      <Innovation />
       <CaseStudies />
       <Blog />
       <About />
