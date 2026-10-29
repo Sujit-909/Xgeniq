@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -53,7 +54,6 @@ export function Testimonials() {
     
     loadTestimonials();
     
-    // Listen for storage changes from the admin tab
     window.addEventListener('storage', loadTestimonials);
     return () => window.removeEventListener('storage', loadTestimonials);
   }, []);
@@ -92,11 +92,16 @@ export function Testimonials() {
                 <div className="pt-4 border-t border-white/5 flex items-center gap-4">
                   {item.imageUrl && (
                     <div className="relative w-12 h-12 rounded-full overflow-hidden border border-primary/20">
-                      <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                      <Image 
+                        src={item.imageUrl} 
+                        alt={item.name || item.title || "Client"} 
+                        fill 
+                        className="object-cover" 
+                      />
                     </div>
                   )}
                   <div>
-                    <h4 className="font-headline font-bold text-xl text-foreground">{item.name}</h4>
+                    <h4 className="font-headline font-bold text-xl text-foreground">{item.name || item.title}</h4>
                     <p className="text-primary text-sm font-medium uppercase tracking-widest">{item.company}</p>
                   </div>
                 </div>

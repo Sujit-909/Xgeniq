@@ -169,6 +169,11 @@ export default function AdminDashboard() {
     const data: any = Object.fromEntries(formData.entries());
     if (previewImage) data.imageUrl = previewImage;
 
+    // Special handling for testimonials to ensure 'name' is saved if the field is 'title' in the common form
+    if (activeTab === 'testimonials' && data.title) {
+      data.name = data.title;
+    }
+
     const keyMap: any = {
       services: { state: services, setter: setServices, storage: 'xgeniq_services' },
       blogs: { state: blogs, setter: setBlogs, storage: 'xgeniq_blogs' },
@@ -231,6 +236,16 @@ export default function AdminDashboard() {
     link.href = URL.createObjectURL(blob);
     link.download = `${activeTab}_export.csv`;
     link.click();
+  };
+
+  const downloadCandidateJSON = (app: any) => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(app, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `candidate_${app.name.replace(/\s+/g, '_')}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
   };
 
   if (!isAuthenticated) return null;
@@ -300,7 +315,7 @@ export default function AdminDashboard() {
                       <form onSubmit={handleSave} className="space-y-4 py-4">
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label>Title</Label>
+                            <Label>{activeTab === 'testimonials' ? 'Client Name' : 'Title'}</Label>
                             <Input name="title" defaultValue={editingItem?.title || editingItem?.name} required className="bg-secondary/50 border-white/5" />
                           </div>
                           {activeTab === 'blogs' && (
@@ -315,6 +330,18 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           )}
+                          {activeTab === 'testimonials' && (
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label>Company</Label>
+                                <Input name="company" defaultValue={editingItem?.company} className="bg-secondary/50 border-white/5" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Rating (1-5)</Label>
+                                <Input name="rating" type="number" min="1" max="5" defaultValue={editingItem?.rating || 5} className="bg-secondary/50 border-white/5" />
+                              </div>
+                            </div>
+                          )}
                           {activeTab === 'caseStudies' && (
                             <div className="space-y-2">
                               <Label>Industry</Label>
@@ -322,8 +349,8 @@ export default function AdminDashboard() {
                             </div>
                           )}
                           <div className="space-y-2">
-                            <Label>Summary / Body</Label>
-                            <Textarea name="summary" defaultValue={editingItem?.summary || editingItem?.description} required className="bg-secondary/50 border-white/5 min-h-[120px]" />
+                            <Label>{activeTab === 'testimonials' ? 'Feedback Words' : 'Summary / Body'}</Label>
+                            <Textarea name="summary" defaultValue={editingItem?.summary || editingItem?.description || editingItem?.text} required className="bg-secondary/50 border-white/5 min-h-[120px]" />
                           </div>
                           <div className="space-y-2">
                             <Label className="flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Feature Image</Label>
@@ -366,13 +393,13 @@ export default function AdminDashboard() {
                     <TableRow key={item.id} className="border-white/5 hover:bg-white/[0.02]">
                       <TableCell>
                         <div className="w-10 h-10 rounded border border-white/10 overflow-hidden relative bg-white/5">
-                          {item.imageUrl ? <Image src={item.imageUrl} alt={item.title} fill className="object-cover" /> : <ImageIcon className="w-4 h-4 m-3 opacity-20" />}
+                          {item.imageUrl ? <Image src={item.imageUrl} alt={item.title || item.name || "Visual"} fill className="object-cover" /> : <ImageIcon className="w-4 h-4 m-3 opacity-20" />}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-bold text-xs">{item.title || item.name}</span>
-                          <span className="text-[10px] text-muted-foreground truncate max-w-[200px]">{item.summary || item.email}</span>
+                          <span className="text-[10px] text-muted-foreground truncate max-w-[200px]">{item.summary || item.email || item.text}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -381,7 +408,43 @@ export default function AdminDashboard() {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           {activeTab === 'applications' && (
-                            <Button variant="ghost" size="icon" onClick={() => { setSelectedApp(item); }}><Eye className="w-3.5 h-3.5" /></Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => setSelectedApp(item)}><Eye className="w-3.5 h-3.5" /></Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-2xl bg-background border-white/10">
+                                <DialogHeader>
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <DialogTitle className="text-2xl font-headline font-bold">{item.name}</DialogTitle>
+                                      <DialogDescription>Application for {item.jobTitle}</DialogDescription>
+                                    </div>
+                                    <Badge className="bg-primary/20 text-primary border-none uppercase tracking-widest text-[10px]">{item.status}</Badge>
+                                  </div>
+                                </DialogHeader>
+                                <div className="grid md:grid-cols-2 gap-6 py-6 border-y border-white/5">
+                                  <div className="space-y-4">
+                                    <div className="flex items-center gap-3 text-sm"><Mail className="w-4 h-4 text-primary" /> {item.email}</div>
+                                    <div className="flex items-center gap-3 text-sm"><Phone className="w-4 h-4 text-primary" /> {item.phone}</div>
+                                    {item.linkedin && (
+                                      <a href={item.linkedin} target="_blank" className="flex items-center gap-3 text-sm text-primary hover:underline"><Linkedin className="w-4 h-4" /> LinkedIn Profile</a>
+                                    )}
+                                  </div>
+                                  <div className="space-y-4">
+                                    <Label className="text-xs uppercase text-muted-foreground">Candidate Intro</Label>
+                                    <p className="text-sm italic text-muted-foreground leading-relaxed">"{item.intro || 'No intro provided.'}"</p>
+                                  </div>
+                                </div>
+                                <DialogFooter className="pt-6 flex justify-between sm:justify-between items-center w-full">
+                                  <Button variant="outline" size="sm" onClick={() => downloadCandidateJSON(item)} className="rounded-full">
+                                    <Download className="w-4 h-4 mr-2" /> Download Profile
+                                  </Button>
+                                  <Button size="sm" onClick={() => toast({ title: "Resume Downloaded", description: `Simulated CV retrieval for ${item.name}.` })} className="rounded-full">
+                                    <Download className="w-4 h-4 mr-2" /> Download Resume
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
                           )}
                           {!['inquiries', 'applications'].includes(activeTab) && (
                             <Button variant="ghost" size="icon" onClick={() => { setEditingItem(item); setPreviewImage(item.imageUrl || null); setIsModalOpen(true); }}><Pencil className="w-3.5 h-3.5" /></Button>
