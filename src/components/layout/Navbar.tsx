@@ -96,7 +96,7 @@ export function Navbar() {
                 <Link href="#case-studies" className="w-full">Case Studies</Link>
               </DropdownMenuItem>
               <DropdownMenuItem suppressHydrationWarning>
-                <Link href="#blog" className="w-full">Innovation</Link>
+                <Link href="#innovation" className="w-full">Innovation</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -163,7 +163,7 @@ export function Navbar() {
               <div className="pl-4 flex flex-col gap-3">
                 <Link href="#blog" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>Blog</Link>
                 <Link href="#case-studies" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>Case Studies</Link>
-                <Link href="#blog" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>Innovation</Link>
+                <Link href="#innovation" className="text-sm" onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>Innovation</Link>
               </div>
             </div>
             <Button className="w-full mt-4 rounded-full py-6 text-lg" asChild onClick={() => setIsMobileMenuOpen(false)} suppressHydrationWarning>
